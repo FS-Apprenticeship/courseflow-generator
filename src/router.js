@@ -4,8 +4,14 @@ import { pinia } from './main'
 import { useUserStore } from './stores/user.js'
 
 import LandingPage from '@/views/LandingPage.vue'
+import SigninPage from '@/views/SigninPage.vue'
+import SignupPage from '@/views/SignupPage.vue'
 
-const routes = [{ path: '/', component: LandingPage }]
+const routes = [
+  { path: '/', component: LandingPage },
+  { path: '/signin', component: SigninPage },
+  { path: '/signup', component: SignupPage },
+]
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),

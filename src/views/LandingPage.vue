@@ -27,9 +27,9 @@ function signUpHandler() {
     <main class="flex-1 flex flex-col items-center justify-center px-6">
       <div class="max-w-3xl w-full text-center space-y-8">
         <div class="space-y-4">
-          <h1 class="text-5xl md:text-6xl font-bold text-white tracking-tight">Code Runner</h1>
+          <h1 class="text-5xl md:text-6xl font-bold text-white tracking-tight">Course Flow Generator</h1>
           <p class="text-lg md:text-xl text-gray-400 max-w-2xl mx-auto">
-            Improve your programming skills using our AI teacher
+            Generate customized courses based on your learning patterns
           </p>
         </div>
 
