@@ -3,7 +3,7 @@
 // Handling challenge information as a reactive object (state) from which info can be pulled
 // Functions are exposed to .vue files with minimal input parameters required
 
-import { ref, computed, reactive } from 'vue'
+import { ref, computed } from 'vue'
 
 import { defineStore } from 'pinia'
 import router from '@/router'
