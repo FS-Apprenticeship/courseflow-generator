@@ -71,7 +71,7 @@ const handleSubmit = async () => {
         <!-- schedule sectiion-->
         <div class="space-y-6">
           <h2 class="text-3xl font-bold text-white text-center">
-            Choose Language
+            Choose Duration of Course
           </h2>
           <div class="flex justify-center">
             <div class="grid grid-cols-3 gap-5 max-w-2xl">

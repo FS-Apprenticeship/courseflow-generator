@@ -9,6 +9,10 @@ import SigninPage from '@/views/SigninPage.vue'
 import SignupPage from '@/views/SignupPage.vue'
 import SelectionPage from '@/views/SelectionPage.vue'
 
+// choose persona, topic, learning style
+// see course generation
+// click specific lines which can be refined or changed (not sure if manually or openai)
+
 const routes = [
   { path: '/', component: LandingPage },
   { path: '/signin', component: SigninPage },
