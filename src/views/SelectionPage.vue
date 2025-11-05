@@ -23,7 +23,7 @@ onMounted(async () => {
   syncStoreUsers(userStore, courseStore);
   // temp
   // const resp = await createCourse("understanding python", "2 weeks", "22", "university level", ["gaming", "books", "laptops"], "conceptual");
-  const resp = await createOverview("understanding python", "2 weeks", "22", "university level", ["gaming", "books", "laptops"], "conceptual");
+  const resp = await createOverview("understanding python", "2 weeks", "22", "middle school", ["gaming", "books", "laptops"], "conceptual");
 })
 
 const selectSchedule = (schedule) => {
