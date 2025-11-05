@@ -1,18 +1,25 @@
 <script setup>
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import NavBar from "@/components/NavBar.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import router from "@/router";
 
+import { useUserStore } from "@/stores/user";
 import { useCourseStore } from "@/stores/course";
+import { syncStoreUsers } from "@/services/auth";
 
-// const userStore = useUserStore();
+const userStore = useUserStore();
 const courseStore = useCourseStore()
+
 const isLoading = ref(false)
 const selectedSchedule = ref(null);
 const selectedTopic = ref(null);
 const topics = ["Learn basic Python", "Understand the U.S Civil War", "Improve essay writing"];
 const schedule = ["1 week", "2 weeks", "3 weeks"];
+
+onMounted(() => {
+  syncStoreUsers(userStore, courseStore);
+})
 
 const selectSchedule = (schedule) => {
   selectedSchedule.value = schedule;

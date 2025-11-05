@@ -4,8 +4,9 @@
 
 import { createClient } from "@supabase/supabase-js";
 
-export function syncStoreUsers(userStore, challengeStore) {
-  challengeStore.challenge.user_id = userStore.user?.id || null;
+export function syncStoreUsers(userStore, courseStore) {
+  // courseStore.user.user_id = userStore.user?.id || null;
+  courseStore.user = userStore.user;
 }
 
 function getClient() {
