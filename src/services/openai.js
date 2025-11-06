@@ -3,57 +3,6 @@
 
 import { supa } from "./auth";
 
-const OverviewFormat = {
-  type: "json_schema",
-  json_schema: {
-    name: "overview",
-    schema: {
-      type: "object",
-      properties: {
-        total_hours: { type: "number" },
-        num_lessons: { type: "number" },
-        overview: { type: "string" },
-      },
-      required: ["total_hours", "num_lessons", "overview"]
-    }
-  }
-}
-
-// course has goal, duration, total_hours, lessons
-// each lesson has title, objectives, duration, desc
-const CourseFormat = {
-  type: "json_schema",
-  json_schema: {
-    name: "course",
-    schema: {
-      type: "object",
-      properties: {
-        goal: { type: "string" },
-        duration: { type: "string" },
-        total_hours: { type: "number" },
-        lessons: {
-          type: "array",
-          items: {
-            type: "object",
-            properties: {
-              title: { type: "string" },
-              duration: { type: "string" },
-              introduction: { type: "string" },
-              context: { type: "string" },
-              example: { type: "string" },
-              activity: { type: "string" },
-              assessment: { type: "string" },
-              reflection: { type: "string" },
-            },
-            required: ["title", "duration", "introduction", "context", "example", "activity", "assessment", "reflection"]
-          }
-        }
-      },
-      required: ["goal", "duration", "total_hours", "lessons"]
-    }
-  }
-}
-
 export async function createCourse(goal, duration, num_lessons, age, reading_level, interests, learning_style) {
   var instructions = `
   You are a course instructor tasked with creating a course structure for your student.
@@ -77,6 +26,8 @@ export async function createCourse(goal, duration, num_lessons, age, reading_lev
   Activity - Describe practice or activity conceptually
   Assessment - Describe an appropriate assessment
   Reflection - Describe key takeaways or synthesis goals
+
+  Each of these must include the rationale for why they are relevant and potential assessment types.
 
   Make sure that the sum of the lesson durations are equal to the total_hours for the course
   `
@@ -177,4 +128,107 @@ export async function createOverview(goal, duration, age, reading_level, interes
   if (error) throw error;
   console.log("overview: ", JSON.parse(data.text))
   return data;
+}
+
+const OverviewFormat = {
+  type: "json_schema",
+  json_schema: {
+    name: "overview",
+    schema: {
+      type: "object",
+      properties: {
+        total_hours: { type: "number" },
+        num_lessons: { type: "number" },
+        overview: { type: "string" },
+      },
+      required: ["total_hours", "num_lessons", "overview"]
+    }
+  }
+}
+
+// course has goal, duration, total_hours, lessons
+// each lesson has title, objectives, duration, desc
+// each section from intro to reflection has rationale and assessment type
+const CourseFormat = {
+  type: "json_schema",
+  json_schema: {
+    name: "course",
+    schema: {
+      type: "object",
+      properties: {
+        goal: { type: "string" },
+        duration: { type: "string" },
+        total_hours: { type: "number" },
+        lessons: {
+          type: "array",
+          items: {
+            type: "object",
+            properties: {
+              title: { type: "string" },
+              duration: { type: "string" },
+              introduction: {
+                type: "object",
+                properties: {
+                  rationale: { type: "string" },
+                  assessment_format: { type: "string" }
+                },
+                required: ["rationale", "assessment_format"]
+              },
+              context: {
+                type: "object",
+                properties: {
+                  rationale: { type: "string" },
+                  assessment_format: { type: "string" }
+                },
+                required: ["rationale", "assessment_format"]
+              },
+              example: {
+                type: "object",
+                properties: {
+                  rationale: { type: "string" },
+                  assessment_format: { type: "string" }
+                },
+                required: ["rationale", "assessment_format"]
+              },
+              activity: {
+                type: "object",
+                properties: {
+                  rationale: { type: "string" },
+                  assessment_format: { type: "string" }
+                },
+                required: ["rationale", "assessment_format"]
+              },
+              assessment: {
+                type: "object",
+                properties: {
+                  rationale: { type: "string" },
+                  assessment_format: { type: "string" }
+                },
+                required: ["rationale", "assessment_format"]
+              },
+              reflection: {
+                type: "object",
+                properties: {
+                  rationale: { type: "string" },
+                  assessment_format: { type: "string" }
+                },
+                required: ["rationale", "assessment_format"]
+              }
+            },
+            required: [
+              "title",
+              "duration",
+              "introduction",
+              "context",
+              "example",
+              "activity",
+              "assessment",
+              "reflection"
+            ]
+          }
+        }
+      },
+      required: ["goal", "duration", "total_hours", "lessons"]
+    }
+  }
 }
