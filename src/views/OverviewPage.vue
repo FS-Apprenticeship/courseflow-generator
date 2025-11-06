@@ -26,10 +26,13 @@ const overview = computed(() => {
 
 onMounted(async () => {
   // TODO see how it explains python basics to a 1st grader --
-  await courseStore.aiCreateOverview("understanding python", "2 weeks", "22", "middle school", ["gaming", "books", "laptops"], "conceptual");
+  await courseStore.aiCreateOverview("understanding python", "2 weeks", "13", "elementary school", ["gaming", "books", "laptops"], "conceptual");
   totalHours.value = overview.value.total_hours
   numLessons.value = overview.value.num_lessons;
   overviewText.value = overview.value.overview;
+
+  // temp
+  await courseStore.aiCreateCourse("2 weeks", "13", "elementary school", ["gaming", "books", "laptops"], "conceptual");
 })
 
 const editedOverview = ref(overviewText.value);

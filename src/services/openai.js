@@ -13,21 +13,6 @@ const OverviewFormat = {
         total_hours: { type: "number" },
         num_lessons: { type: "number" },
         overview: { type: "string" },
-        // goal: { type: "string" },
-        // duration: { type: "string" },
-        // lessons: {
-        //   type: "array",
-        //   items: {
-        //     type: "object",
-        //     properties: {
-        //       title: { type: "string" },
-        //       objectives: { type: "string" },
-        //       duration: { type: "string" },
-        //       description: { type: "string" }
-        //     },
-        //     required: ["title", "objectives", "duration", "description"]
-        //   }
-        // }
       },
       required: ["total_hours", "num_lessons", "overview"]
     }
@@ -52,11 +37,15 @@ const CourseFormat = {
             type: "object",
             properties: {
               title: { type: "string" },
-              objectives: { type: "string" },
               duration: { type: "string" },
-              description: { type: "string" }
+              introduction: { type: "string" },
+              context: { type: "string" },
+              example: { type: "string" },
+              activity: { type: "string" },
+              assessment: { type: "string" },
+              reflection: { type: "string" },
             },
-            required: ["title", "objectives", "duration", "description"]
+            required: ["title", "duration", "introduction", "context", "example", "activity", "assessment", "reflection"]
           }
         }
       },
@@ -65,7 +54,7 @@ const CourseFormat = {
   }
 }
 
-export async function createCourse(goal, duration, age, reading_level, interests, learning_style) {
+export async function createCourse(goal, duration, num_lessons, age, reading_level, interests, learning_style) {
   var instructions = `
   You are a course instructor tasked with creating a course structure for your student.
   The course must be relevant to the topic the student wants to learn, and must be structured around how quickly they want to learn it.
@@ -76,14 +65,26 @@ export async function createCourse(goal, duration, age, reading_level, interests
   3. Interests (one or multiple)
   4. Their learning style (visual, conceptual, hands-on, narrative, etc.)
 
-  You will be given a topic and duration, and you must use all this information to create a structured course for the student.
-  Use the given json format to provide all the information for the course.
+  You will be given a topic, duration, and the number of lessons.
+  You must use all this information to create a structured course for the student.
 
+  I will explain the json schema format you have been given
+  Each lesson will have the following information:
+
+  Introduction - Introduce the topic and connect it to learner interests
+  Context (and Explanation) - Explain the concept clearly
+  Real-World Example - Connect to relatable scenarios or interests
+  Activity - Describe practice or activity conceptually
+  Assessment - Describe an appropriate assessment
+  Reflection - Describe key takeaways or synthesis goals
+
+  Make sure that the sum of the lesson durations are equal to the total_hours for the course
   `
 
   const userPrompt = `
   I want to learn about this topic: ${goal}.
   I would like to learn about it in this amount of time: ${duration}.
+  I want only ${num_lessons} lessons for this course.
 
   Here is some information about me:
   Age: ${age}

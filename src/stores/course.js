@@ -29,8 +29,8 @@ export const useCourseStore = defineStore("courseStore", () => {
   }
 
   // passing in the overview instead of goal here from user
-  async function aiCreateCourse(duration, age, reading_level, interests, learning_style) {
-    let data = await createCourse(this.overview.overview, duration, age, reading_level, interests, learning_style);
+  async function aiCreateCourse(age, reading_level, interests, learning_style) {
+    let data = await createCourse(this.overview.overview, this.overview.total_hours, this.overview.num_lessons, age, reading_level, interests, learning_style);
     data = JSON.parse(data.text)
     this.overview = data
   }

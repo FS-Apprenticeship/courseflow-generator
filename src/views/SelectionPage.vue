@@ -8,7 +8,6 @@ import { useUserStore } from "@/stores/user";
 import { useCourseStore } from "@/stores/course";
 import { syncStoreUsers } from "@/services/auth";
 
-
 const userStore = useUserStore();
 const courseStore = useCourseStore()
 
