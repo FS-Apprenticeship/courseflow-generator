@@ -4,15 +4,36 @@
 // Functions are exposed to .vue files with minimal input parameters required
 
 import { ref, reactive } from 'vue'
+import router from '@/router'
 
 import { defineStore } from 'pinia'
-import router from '@/router'
+import { createOverview, createCourse } from '@/services/openai';
 
 export const useCourseStore = defineStore("courseStore", () => {
   const user = ref(null);
   const course = reactive({
     id: null
   });
+  const overview = reactive({
+    overview: null,
+    num_lessons: null,
+    total_hours: null
+  });
 
-  return { user, course }
+  async function aiCreateOverview(goal, duration, age, reading_level, interests, learning_style) {
+    let data = await createOverview(goal, duration, age, reading_level, interests, learning_style);
+    data = JSON.parse(data.text)
+    this.overview.overview = data.overview
+    this.overview.num_lessons = data.num_lessons
+    this.overview.total_hours = data.total_hours
+  }
+
+  // passing in the overview instead of goal here from user
+  async function aiCreateCourse(duration, age, reading_level, interests, learning_style) {
+    let data = await createCourse(this.overview.overview, duration, age, reading_level, interests, learning_style);
+    data = JSON.parse(data.text)
+    this.overview = data
+  }
+
+  return { user, course, overview, aiCreateOverview, aiCreateCourse }
 })

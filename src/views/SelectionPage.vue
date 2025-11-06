@@ -8,7 +8,6 @@ import { useUserStore } from "@/stores/user";
 import { useCourseStore } from "@/stores/course";
 import { syncStoreUsers } from "@/services/auth";
 
-import { createOverview, createCourse } from "@/services/openai";
 
 const userStore = useUserStore();
 const courseStore = useCourseStore()
@@ -21,9 +20,6 @@ const schedule = ["1 week", "2 weeks", "3 weeks"];
 
 onMounted(async () => {
   syncStoreUsers(userStore, courseStore);
-  // temp
-  // const resp = await createCourse("understanding python", "2 weeks", "22", "university level", ["gaming", "books", "laptops"], "conceptual");
-  const resp = await createOverview("understanding python", "2 weeks", "22", "middle school", ["gaming", "books", "laptops"], "conceptual");
 })
 
 const selectSchedule = (schedule) => {

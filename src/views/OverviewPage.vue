@@ -1,7 +1,11 @@
 <script setup>
-import { ref, nextTick } from "vue";
+import { ref, nextTick, computed, onMounted } from "vue";
 import NavBar from "@/components/NavBar.vue";
 import BaseButton from "@/components/BaseButton.vue";
+
+import { useCourseStore } from "@/stores/course";
+
+const courseStore = useCourseStore();
 
 const isEditingOverview = ref(false);
 const isEditingHours = ref(false);
@@ -12,11 +16,21 @@ const lessonsInputRef = ref(null);
 const overviewTextareaRef = ref(null);
 
 // Sample data - user will populate this with actual data
-const totalHours = ref(12);
-const numLessons = ref(8);
-const overviewText = ref(
-  "Learn fundamental Python concepts including variables, data types, control flow, and functions through hands-on gaming-inspired examples. Progress from basic syntax to intermediate problem-solving techniques."
-);
+const totalHours = ref(null);
+const numLessons = ref(null);
+const overviewText = ref("");
+
+const overview = computed(() => {
+  return courseStore.overview;
+})
+
+onMounted(async () => {
+  // TODO see how it explains python basics to a 1st grader --
+  await courseStore.aiCreateOverview("understanding python", "2 weeks", "22", "middle school", ["gaming", "books", "laptops"], "conceptual");
+  totalHours.value = overview.value.total_hours
+  numLessons.value = overview.value.num_lessons;
+  overviewText.value = overview.value.overview;
+})
 
 const editedOverview = ref(overviewText.value);
 const editedHours = ref(totalHours.value);
@@ -75,6 +89,7 @@ const cancelEdit = () => {
   editedHours.value = totalHours.value;
   editedLessons.value = numLessons.value;
 };
+
 </script>
 
 <template>
