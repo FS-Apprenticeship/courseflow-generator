@@ -18,8 +18,8 @@ export const useCourseStore = defineStore("courseStore", () => {
     total_hours: null
   });
 
-  async function aiCreateOverview(goal, duration, age, reading_level, interests, learning_style) {
-    let data = await createOverview(goal, duration, age, reading_level, interests, learning_style);
+  async function aiCreateOverview(goal, duration, profile) {
+    let data = await createOverview(goal, duration, profile.age, profile.reading_level, profile.interests, profile.learning_style);
     data = JSON.parse(data.text)
     this.overview.overview = data.overview
     this.overview.num_lessons = data.num_lessons

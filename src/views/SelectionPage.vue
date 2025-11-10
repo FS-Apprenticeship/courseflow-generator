@@ -53,14 +53,14 @@ const handleSubmit = async () => {
   });
   isLoading.value = true;
   // processing here
+  await courseStore.aiCreateOverview(selectedTopic.value, selectedSchedule.value, selectedProfile.value);
   isLoading.value = false;
 
-  // router.push("/challenge");
+  router.push("/overview");
 };
 
 const handleProfileSave = (profile) => {
-  // TODO: Add the profile to your profiles array or send to backend
-  // profiles.value.push(profile);
+  // FIXME: if name is changed, it creates a new profile
   userStore.editProfile(profile);
   console.log("Profile saved:", profile);
 };

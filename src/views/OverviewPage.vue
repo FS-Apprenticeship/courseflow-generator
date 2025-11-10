@@ -1,11 +1,13 @@
 <script setup>
-import { ref, nextTick, computed, onMounted } from "vue";
+import { ref, nextTick, onMounted } from "vue";
 import NavBar from "@/components/NavBar.vue";
 import BaseButton from "@/components/BaseButton.vue";
 
 import { useCourseStore } from "@/stores/course";
 
 const courseStore = useCourseStore();
+
+const isLoading = ref(false);
 
 const isEditingOverview = ref(false);
 const isEditingHours = ref(false);
@@ -20,16 +22,11 @@ const totalHours = ref(null);
 const numLessons = ref(null);
 const overviewText = ref("");
 
-const overview = computed(() => {
-  return courseStore.overview;
-})
-
 onMounted(async () => {
   // TODO see how it explains python basics to a 1st grader --
-  await courseStore.aiCreateOverview("understanding python", "2 weeks", "13", "elementary school", ["gaming", "books", "laptops"], "conceptual");
-  totalHours.value = overview.value.total_hours
-  numLessons.value = overview.value.num_lessons;
-  overviewText.value = overview.value.overview;
+  totalHours.value = courseStore.overview.total_hours
+  numLessons.value = courseStore.overview.num_lessons;
+  overviewText.value = courseStore.overview.overview;
 
   // temp
   await courseStore.aiCreateCourse("2 weeks", "13", "elementary school", ["gaming", "books", "laptops"], "conceptual");
@@ -92,6 +89,12 @@ const cancelEdit = () => {
   editedHours.value = totalHours.value;
   editedLessons.value = numLessons.value;
 };
+
+const handleSubmit = async () => {
+  // empty right now
+
+  // router.push('/course')
+}
 
 </script>
 
@@ -169,6 +172,13 @@ const cancelEdit = () => {
         <!-- Action Buttons -->
         <div v-if="isEditingOverview || isEditingHours || isEditingLessons" class="flex gap-4 justify-center pt-4">
           <BaseButton @click="cancelEdit" variant="secondary">Cancel</BaseButton>
+        </div>
+
+
+        <div class="flex justify-center pt-6">
+          <BaseButton :loading="isLoading" @click="handleSubmit" class="min-w-[200px]">
+            Submit
+          </BaseButton>
         </div>
       </div>
     </main>
