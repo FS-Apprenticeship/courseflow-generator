@@ -14,8 +14,8 @@ export const useUserStore = defineStore('userStore', () => {
   const session = ref(null)
   // set sane defaults later on
   const profiles = ref([
-    { name: 'Profile 1', age: 15, readingLevel: 'A', interests: ['reading'], learningStyle: 'A' },
-    { name: 'Profile 2', age: 12, readingLevel: 'B', interests: ['sports', 'music'], learningStyle: 'B' },
+    { name: 'Profile 1', age: 15, readingLevel: "Middle School", interests: ['reading'], learningStyle: "Conceptual" },
+    { name: 'Profile 2', age: 35, readingLevel: "PhD", interests: ['sports', 'music'], learningStyle: "Hands On" },
   ]);
   const chosenProfile = ref({});
 

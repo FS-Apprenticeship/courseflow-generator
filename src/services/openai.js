@@ -134,7 +134,7 @@ export async function createOverview(goal, duration, age, reading_level, interes
 }
 
 export async function refineCourse(currentCourse, refinementType, profile) {
-  // Refinement type options: "simplify_scope", "add_depth", "adjust_workload", "align_goal"
+  // Refinement type options: "simplify_scope", "add_depth", "less_workload", "more_workload", "align_goal"
 
   let refinementInstructions = ""
 

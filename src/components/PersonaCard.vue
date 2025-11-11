@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, nextTick } from 'vue'
+import { ref, computed } from 'vue'
 import BaseButton from '@/components/BaseButton.vue'
 
 /**
@@ -57,9 +57,8 @@ const editForm = ref({
 const isModalOpen = ref(false)
 const isNewProfile = computed(() => !props.profile.name)
 
-// Dropdown options (placeholders - fill in as needed)
-const readingLevelOptions = ['A', 'B', 'C']
-const learningStyleOptions = ['A', 'B', 'C']
+const readingLevelOptions = ["Elementary School", "Middle School", "High School", "Undergraduate", "Graduate", "PhD"]
+const learningStyleOptions = ["Visual", "Conceptual", "Hands On"]
 
 const openModal = () => {
   editForm.value = {
