@@ -29,7 +29,8 @@ export async function createCourse(goal, duration, num_lessons, age, reading_lev
 
   Each of these must include the rationale for why they are relevant and potential assessment types.
 
-  Make sure that the sum of the lesson durations are equal to the total_hours for the course
+  Make sure that the sum of the lesson durations are equal to the total_hours for the course before returning.
+  If not, reevalute course structure.
   `
 
   const userPrompt = `
@@ -102,7 +103,7 @@ export async function createOverview(goal, duration, age, reading_level, interes
   Interests: ${interests}
   Learning style: ${learning_style}
 
-  Please create a high-level overview of what this course may look like.
+  Please create a high-level overview of what this course may look like. Write at least 2 sentences.
   `
   const myPrompts = [
     {
@@ -206,6 +207,7 @@ export async function refineCourse(currentCourse, refinementType, profile) {
   ${JSON.stringify(currentCourse, null, 2)}
 
   Please refine this course as described above, maintaining all required fields and the proper JSON schema.
+  Double check before returning that the sum of durations for all lessons equals course total_hours. Otherwise reevaluate
   `
 
   const myPrompts = [
