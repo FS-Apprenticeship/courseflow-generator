@@ -2,17 +2,16 @@
 
 ## Todo
 
-- [ ] add functions to courseStore
+- [x] add functions to courseStore
 - [x] storing information in stores instead of local vars
 - [x] default persona creation for new user
 - [x] page / popup to create new personas
-- [ ] add persona ref to courses AND user store so we can pass less items through ai functions
 - [ ] add specific durations instead of letting the user put whatever (for course gen)
 - [ ] implement fetching and uploading in right places
-- [ ] add router guards
+- [x] add router guards
 - [ ] improve prompting using real life structure
-- [ ] show course structure fully
-- [ ] make interactive course structure so that we can edit and refine
+- [x] show course structure fully
+- [x] make interactive course structure so that we can edit and refine
 - [ ] possibly add an agent sidebar to the right which can let openai edit your course structure ??
 
 ## Project Setup
