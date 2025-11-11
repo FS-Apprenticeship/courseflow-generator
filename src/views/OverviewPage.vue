@@ -91,12 +91,10 @@ const cancelEdit = () => {
 };
 
 const handleSubmit = async () => {
-  // empty right now
   isLoading.value = true;
 
-  const data = await courseStore.aiCreateCourse(userStore.chosenProfile.value);
-  console.log("waiting: ", data)
-  courseStore.overviewCompleted.value = true;
+  await courseStore.aiCreateCourse(userStore.chosenProfile.value);
+  courseStore.overviewCompleted = true;
 
   isLoading.value = false;
 

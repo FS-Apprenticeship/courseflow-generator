@@ -48,12 +48,12 @@ export async function createCourse(goal, duration, num_lessons, age, reading_lev
   `
   const myPrompts = [
     {
-      role: "user",
-      content: userPrompt,
-    },
-    {
       role: "developer",
       content: instructions,
+    },
+    {
+      role: "user",
+      content: userPrompt,
     }
   ];
 
@@ -109,12 +109,12 @@ export async function createOverview(goal, duration, age, reading_level, interes
   `
   const myPrompts = [
     {
-      role: "user",
-      content: userPrompt,
-    },
-    {
       role: "developer",
       content: instructions,
+    },
+    {
+      role: "user",
+      content: userPrompt,
     }
   ];
 
@@ -219,13 +219,13 @@ export async function refineCourse(currentCourse, refinementType, profile) {
 
   const myPrompts = [
     {
-      role: "user",
-      content: userPrompt,
-    },
-    {
       role: "developer",
       content: instructions,
     },
+    {
+      role: "user",
+      content: userPrompt,
+    }
   ]
 
   const prompt = {
