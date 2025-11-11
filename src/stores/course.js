@@ -11,7 +11,7 @@ import { createOverview, createCourse } from '@/services/openai';
 
 export const useCourseStore = defineStore("courseStore", () => {
   const user = ref(null);
-  const course = ref(null);
+  const course = ref({});
   const overview = reactive({
     overview: null,
     num_lessons: null,
@@ -26,8 +26,8 @@ export const useCourseStore = defineStore("courseStore", () => {
     this.overview.total_hours = data.total_hours
   }
 
-  async function aiCreateCourse(age, reading_level, interests, learning_style) {
-    let data = await createCourse(this.overview.overview, this.overview.total_hours, this.overview.num_lessons, age, reading_level, interests, learning_style);
+  async function aiCreateCourse(profile) {
+    let data = await createCourse(overview.overview, overview.total_hours, overview.num_lessons, profile.age, profile.reading_level, profile.interests, profile.learning_style);
     data = JSON.parse(data.text)
     this.course = data
   }

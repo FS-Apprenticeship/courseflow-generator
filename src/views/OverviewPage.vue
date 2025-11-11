@@ -1,10 +1,14 @@
 <script setup>
 import { ref, nextTick, onMounted } from "vue";
+
+import router from "@/router";
 import NavBar from "@/components/NavBar.vue";
 import BaseButton from "@/components/BaseButton.vue";
 
+import { useUserStore } from "@/stores/user";
 import { useCourseStore } from "@/stores/course";
 
+const userStore = useUserStore();
 const courseStore = useCourseStore();
 
 const isLoading = ref(false);
@@ -17,7 +21,6 @@ const hoursInputRef = ref(null);
 const lessonsInputRef = ref(null);
 const overviewTextareaRef = ref(null);
 
-// Sample data - user will populate this with actual data
 const totalHours = ref(null);
 const numLessons = ref(null);
 const overviewText = ref("");
@@ -27,9 +30,6 @@ onMounted(async () => {
   totalHours.value = courseStore.overview.total_hours
   numLessons.value = courseStore.overview.num_lessons;
   overviewText.value = courseStore.overview.overview;
-
-  // temp
-  await courseStore.aiCreateCourse("2 weeks", "13", "elementary school", ["gaming", "books", "laptops"], "conceptual");
 })
 
 const editedOverview = ref(overviewText.value);
@@ -92,8 +92,14 @@ const cancelEdit = () => {
 
 const handleSubmit = async () => {
   // empty right now
+  isLoading.value = true;
 
-  // router.push('/course')
+  const data = await courseStore.aiCreateCourse(userStore.chosenProfile.value);
+  console.log("waiting: ", data)
+
+  isLoading.value = false;
+
+  router.push('/course')
 }
 
 </script>

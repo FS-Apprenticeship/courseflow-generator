@@ -38,6 +38,7 @@ const selectTopic = (topic) => {
 const selectProfile = (profile) => {
   console.log("selected profile: ", profile);
   selectedProfile.value = profile;
+  userStore.chosenProfile.value = profile;
 };
 
 const handleSubmit = async () => {

@@ -17,6 +17,7 @@ export const useUserStore = defineStore('userStore', () => {
     { name: 'Profile 1', age: 15, readingLevel: 'A', interests: ['reading'], learningStyle: 'A' },
     { name: 'Profile 2', age: 12, readingLevel: 'B', interests: ['sports', 'music'], learningStyle: 'B' },
   ]);
+  const chosenProfile = ref({});
 
   const isLoggedIn = computed(() => user.value != null)
 
@@ -77,5 +78,5 @@ export const useUserStore = defineStore('userStore', () => {
     }
   }
 
-  return { user, session, isLoggedIn, profiles, loadUser, signUp, signIn, signOut, addProfile, editProfile, deleteProfile }
+  return { user, session, isLoggedIn, profiles, chosenProfile, loadUser, signUp, signIn, signOut, addProfile, editProfile, deleteProfile }
 })
