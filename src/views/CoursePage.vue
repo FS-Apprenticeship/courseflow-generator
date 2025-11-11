@@ -1,14 +1,17 @@
 <script setup>
 import { ref, computed, watch } from "vue";
+import { useUserStore } from "@/stores/user";
 import { useCourseStore } from "@/stores/course";
 import NavBar from "@/components/NavBar.vue";
 import BaseButton from "@/components/BaseButton.vue";
 
+const userStore = useUserStore();
 const courseStore = useCourseStore();
 
 const currentLessonIndex = ref(0);
 const expandedLessonIndex = ref(null);
 const expandedSectionIndex = ref({});
+const isRefining = ref(false);
 
 const course = ref({
   goal: "",
@@ -50,6 +53,71 @@ const goToPreviousLesson = () => {
   if (currentLessonIndex.value > 0) {
     currentLessonIndex.value -= 1;
     expandedLessonIndex.value = currentLessonIndex.value;
+  }
+};
+
+const refineCourseSimplifiy = async () => {
+  isRefining.value = true;
+  try {
+    await courseStore.aiRefineCourse("simplify_scope", userStore.chosenProfile.value);
+    currentLessonIndex.value = 0;
+    expandedLessonIndex.value = 0;
+  } catch (error) {
+    console.log("[v0] Error simplifying course scope:", error);
+  } finally {
+    isRefining.value = false;
+  }
+};
+
+const refineCourseAddDepth = async () => {
+  isRefining.value = true;
+  try {
+    await courseStore.aiRefineCourse("add_depth", userStore.chosenProfile.value);
+    currentLessonIndex.value = 0;
+    expandedLessonIndex.value = 0;
+  } catch (error) {
+    console.log("[v0] Error adding depth to course:", error);
+  } finally {
+    isRefining.value = false;
+  }
+};
+
+const refineCourseAdjustWorkloadLess = async () => {
+  isRefining.value = true;
+  try {
+    await courseStore.aiRefineCourse("less_workload", userStore.chosenProfile.value);
+    currentLessonIndex.value = 0;
+    expandedLessonIndex.value = 0;
+  } catch (error) {
+    console.log("[v0] Error adjusting workload:", error);
+  } finally {
+    isRefining.value = false;
+  }
+};
+
+const refineCourseAdjustWorkloadMore = async () => {
+  isRefining.value = true;
+  try {
+    await courseStore.aiRefineCourse("more_workload", userStore.chosenProfile.value);
+    currentLessonIndex.value = 0;
+    expandedLessonIndex.value = 0;
+  } catch (error) {
+    console.log("[v0] Error adjusting workload:", error);
+  } finally {
+    isRefining.value = false;
+  }
+};
+
+const refineCourseAlignGoal = async () => {
+  isRefining.value = true;
+  try {
+    await courseStore.aiRefineCourse("align_goal", userStore.chosenProfile.value);
+    currentLessonIndex.value = 0;
+    expandedLessonIndex.value = 0;
+  } catch (error) {
+    console.log("[v0] Error aligning course to goal:", error);
+  } finally {
+    isRefining.value = false;
   }
 };
 
@@ -221,6 +289,84 @@ watch(
                   {{ currentLessonIndex + 1 }} of {{ course.lessons.length }}
                 </p>
               </div>
+
+              <!-- Added refinement panel at the bottom -->
+              <div class="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
+                <p class="text-xs font-medium text-gray-400 uppercase mb-4">Review & Refine</p>
+                <div class="space-y-2">
+                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseSimplifiy"
+                    class="w-full text-sm">
+                    <span v-if="isRefining" class="inline-flex items-center gap-2">
+                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                      </svg>
+                      Simplifying...
+                    </span>
+                    <span v-else>Simplify Scope</span>
+                  </BaseButton>
+                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseAddDepth"
+                    class="w-full text-sm">
+                    <span v-if="isRefining" class="inline-flex items-center gap-2">
+                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                      </svg>
+                      Adding depth...
+                    </span>
+                    <span v-else>Add More Depth</span>
+                  </BaseButton>
+                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseAdjustWorkloadLess"
+                    class="w-full text-sm">
+                    <span v-if="isRefining" class="inline-flex items-center gap-2">
+                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                      </svg>
+                      Adjusting...
+                    </span>
+                    <span v-else>Adjust Workload - Less</span>
+                  </BaseButton>
+                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseAdjustWorkloadMore"
+                    class="w-full text-sm">
+                    <span v-if="isRefining" class="inline-flex items-center gap-2">
+                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                      </svg>
+                      Adjusting...
+                    </span>
+                    <span v-else>Adjust Workload - More</span>
+                  </BaseButton>
+                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseAlignGoal"
+                    class="w-full text-sm">
+                    <span v-if="isRefining" class="inline-flex items-center gap-2">
+                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
+                        </circle>
+                        <path class="opacity-75" fill="currentColor"
+                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                        </path>
+                      </svg>
+                      Aligning...
+                    </span>
+                    <span v-else>Align Better to Goal</span>
+                  </BaseButton>
+                </div>
+              </div>
+
             </div>
           </div>
         </div>

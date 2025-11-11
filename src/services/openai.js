@@ -130,6 +130,110 @@ export async function createOverview(goal, duration, age, reading_level, interes
   return data;
 }
 
+export async function refineCourse(currentCourse, refinementType, profile) {
+  // Refinement type options: "simplify_scope", "add_depth", "adjust_workload", "align_goal"
+
+  let refinementInstructions = ""
+
+  if (refinementType === "simplify_scope") {
+    refinementInstructions = `
+    The user wants to SIMPLIFY the course scope. This means:
+    - Reduce the number of lessons (consolidate related lessons)
+    - Focus on core concepts only, remove advanced/tangential topics
+    - Maintain coherence and learning progression
+    - Keep the same learner profile in mind
+    `
+  } else if (refinementType === "add_depth") {
+    refinementInstructions = `
+    The user wants to ADD MORE DEPTH to the course. This means:
+    - Increase the number of lessons to explore topics more thoroughly
+    - Add sub-concepts and advanced topics
+    - Add more details to each part of the lesson
+    - Extend individual lesson durations for deeper exploration
+    - Include more complex examples and assessments
+    - Keep the same learner profile in mind
+    `
+  } else if (refinementType === "less_workload") {
+    refinementInstructions = `
+    The user wants to ADJUST THE WORKLOAD TO BE LESS. This means:
+    - Keep the same number of lessons and structure
+    - Modify lesson durations and activity intensity to take less time
+    - Keep in mind that learner has less time to commit to course
+    - Adjust assessment complexity accordingly
+    - Maintain the same learning objectives
+    `
+  } else if (refinementType === "more_workload") {
+    refinementInstructions = `
+    The user wants to ADJUST THE WORKLOAD TO BE MORE. This means:
+    - Keep the same number of lessons and structure
+    - Modify lesson durations and activity intensity to take more time
+    - Learner is ready to commit more time to the course
+    - Adjust assessment complexity accordingly
+    - Maintain the same learning objectives
+    `
+  } else if (refinementType === "align_goal") {
+    refinementInstructions = `
+    The user wants to BETTER ALIGN with their goal. This means:
+    - Restructure lessons to more directly support the stated learning goal
+    - Reorder lessons for better progression toward the goal
+    - Modify content focus to emphasize goal-relevant concepts
+    - Ensure each lesson directly contributes to goal achievement
+    - Maintain appropriate difficulty for the learner profile
+    `
+  }
+
+  var instructions = `
+  You are a course instructor tasked with refining an existing course structure based on user feedback.
+
+  The current course was designed for a student with the following profile:
+  - Age: ${profile.age}
+  - Reading level: ${profile.reading_level}
+  - Interests: ${profile.interests}
+  - Learning style: ${profile.learning_style}
+
+  ${refinementInstructions}
+
+  You must refine the provided course while:
+  1. Maintaining the JSON schema format exactly as it was provided
+  2. Keeping the course coherent and well-paced
+  3. Ensuring all 6 sections (introduction, context, example, activity, assessment, reflection) are present in each lesson
+  4. Ensuring the sum of lesson durations equals the total_hours
+  5. Providing rationale and assessment_format for each section
+  `
+
+  const userPrompt = `
+  Here is the current course structure that needs refinement:
+  ${JSON.stringify(currentCourse, null, 2)}
+
+  Please refine this course as described above, maintaining all required fields and the proper JSON schema.
+  `
+
+  const myPrompts = [
+    {
+      role: "user",
+      content: userPrompt,
+    },
+    {
+      role: "developer",
+      content: instructions,
+    },
+  ]
+
+  const prompt = {
+    model: "gpt-4o-mini",
+    messages: myPrompts,
+    response_format: CourseFormat,
+  }
+
+  const { data, error } = await supa.functions.invoke("createOverview", {
+    body: { prompt },
+  })
+
+  if (error) throw error
+  console.log("refined course: ", JSON.parse(data.text))
+  return data
+}
+
 const OverviewFormat = {
   type: "json_schema",
   json_schema: {

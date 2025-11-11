@@ -4,10 +4,9 @@
 // Functions are exposed to .vue files with minimal input parameters required
 
 import { ref, reactive } from 'vue'
-import router from '@/router'
 
 import { defineStore } from 'pinia'
-import { createOverview, createCourse } from '@/services/openai';
+import { createOverview, createCourse, refineCourse } from '@/services/openai';
 
 export const useCourseStore = defineStore("courseStore", () => {
   const user = ref(null);
@@ -29,8 +28,19 @@ export const useCourseStore = defineStore("courseStore", () => {
   async function aiCreateCourse(profile) {
     let data = await createCourse(overview.overview, overview.total_hours, overview.num_lessons, profile.age, profile.reading_level, profile.interests, profile.learning_style);
     data = JSON.parse(data.text)
-    this.course = data
+    course.value = data
   }
 
-  return { user, course, overview, aiCreateOverview, aiCreateCourse }
+  async function aiRefineCourse(refinementType, profile) {
+    try {
+      let data = await refineCourse(course.value, refinementType, profile)
+      data = JSON.parse(data.text)
+      course.value = data
+    } catch (error) {
+      console.log("[v0] Error refining course:", error)
+      throw error
+    }
+  }
+
+  return { user, course, overview, aiCreateOverview, aiCreateCourse, aiRefineCourse }
 })
