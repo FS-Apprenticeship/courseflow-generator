@@ -17,6 +17,10 @@ export const useCourseStore = defineStore("courseStore", () => {
     total_hours: null
   });
 
+  // for router guards
+  const selectionCompleted = ref(false);
+  const overviewCompleted = ref(false);
+
   async function aiCreateOverview(goal, duration, profile) {
     let data = await createOverview(goal, duration, profile.age, profile.reading_level, profile.interests, profile.learning_style);
     data = JSON.parse(data.text)
@@ -42,5 +46,5 @@ export const useCourseStore = defineStore("courseStore", () => {
     }
   }
 
-  return { user, course, overview, aiCreateOverview, aiCreateCourse, aiRefineCourse }
+  return { user, course, overview, selectionCompleted, overviewCompleted, aiCreateOverview, aiCreateCourse, aiRefineCourse }
 })
