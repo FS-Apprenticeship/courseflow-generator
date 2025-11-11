@@ -57,6 +57,8 @@ const handleSubmit = async () => {
   await courseStore.aiCreateOverview(selectedTopic.value, selectedSchedule.value, selectedProfile.value);
   isLoading.value = false;
 
+  courseStore.selectionCompleted.value = true;
+
   router.push("/overview");
 };
 

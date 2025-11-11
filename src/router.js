@@ -19,9 +19,9 @@ const routes = [
   { path: '/', component: LandingPage },
   { path: '/signin', component: SigninPage },
   { path: '/signup', component: SignupPage },
-  { path: '/selection', component: SelectionPage },
-  { path: '/overview', component: OverviewPage },
-  { path: '/course', component: CoursePage },
+  { path: '/selection', component: SelectionPage, meta: { requiresAuth: true } },
+  { path: '/overview', component: OverviewPage, meta: { requiresAuth: true } },
+  { path: '/course', component: CoursePage, meta: { requiresAuth: true } },
 ]
 
 const router = createRouter({
@@ -34,11 +34,23 @@ router.beforeEach(async (to, from, next) => {
   const userStore = useUserStore(pinia)
   const courseStore = useCourseStore(pinia)
   await userStore.loadUser()
+
+  // authentication guard first
   if (to.meta.requiresAuth && !userStore.isLoggedIn) {
-    next('/signin')
-  } else {
-    next()
+    return next('/signin')
   }
+
+  // overview page guard - redirect to selection
+  if (to.path === '/overview' && !courseStore.selectionCompleted) {
+    return next('/selection')
+  }
+
+  // course page guard - redirect to selection
+  if (to.path === '/course' && !courseStore.overviewCompleted) {
+    return next('/selection')
+  }
+
+  next()
 })
 
 export default router

@@ -96,6 +96,7 @@ const handleSubmit = async () => {
 
   const data = await courseStore.aiCreateCourse(userStore.chosenProfile.value);
   console.log("waiting: ", data)
+  courseStore.overviewCompleted.value = true;
 
   isLoading.value = false;
 
