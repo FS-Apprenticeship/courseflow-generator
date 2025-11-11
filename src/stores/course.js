@@ -41,7 +41,7 @@ export const useCourseStore = defineStore("courseStore", () => {
       data = JSON.parse(data.text)
       course.value = data
     } catch (error) {
-      console.log("[v0] Error refining course:", error)
+      console.log("Error refining course:", error)
       throw error
     }
   }
