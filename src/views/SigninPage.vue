@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import router from '@/router'
 
 import { useUserStore } from '@/stores/user'
 import { useCourseStore } from '@/stores/course'
@@ -14,6 +15,7 @@ const password = ref('')
 async function signInHelper() {
   await userStore.signIn(email.value, password.value)
   syncStoreUsers(userStore, courseStore);
+  router.push('/selection')
 }
 </script>
 

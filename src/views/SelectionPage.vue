@@ -1,50 +1,88 @@
 <script setup>
 import { onMounted, ref } from "vue";
+import router from "@/router";
+
 import NavBar from "@/components/NavBar.vue";
 import BaseButton from "@/components/BaseButton.vue";
-import router from "@/router";
+import PersonaCard from "@/components/PersonaCard.vue";
 
 import { useUserStore } from "@/stores/user";
 import { useCourseStore } from "@/stores/course";
 import { syncStoreUsers } from "@/services/auth";
 
 const userStore = useUserStore();
-const courseStore = useCourseStore()
+const courseStore = useCourseStore();
 
-const isLoading = ref(false)
-const selectedSchedule = ref(null);
-const selectedTopic = ref(null);
+onMounted(async () => {
+  syncStoreUsers(userStore, courseStore);
+});
+
 const topics = ["Learn basic Python", "Understand the U.S Civil War", "Improve essay writing"];
 const schedule = ["1 week", "2 weeks", "3 weeks"];
+const isLoading = ref(false);
 
-onMounted(() => {
-  syncStoreUsers(userStore, courseStore);
-})
+const selectedProfile = ref(null);
+const selectedSchedule = ref(null);
+const selectedTopic = ref(null);
 
 const selectSchedule = (schedule) => {
+  console.log("selected sched: ", schedule);
   selectedSchedule.value = schedule;
 };
 
-
 const selectTopic = (topic) => {
+  console.log("selected topic: ", topic);
   selectedTopic.value = topic;
 };
 
+const selectProfile = (profile) => {
+  console.log("selected profile: ", profile);
+  selectedProfile.value = profile;
+  userStore.chosenProfile.value = profile;
+};
+
 const handleSubmit = async () => {
-  if (!selectSchedule.value || !selectedTopic.value) {
-    alert("Please select both a language and a topic");
+  if (!selectedProfile.value || !selectedSchedule.value || !selectedTopic.value) {
+    alert("Please select profile, topic, and duration");
     return null;
   }
 
   console.log("Selected:", {
-    schedule: schedule.value,
+    profile: selectedProfile.value,
+    schedule: selectedSchedule.value,
     topic: selectedTopic.value,
   });
   isLoading.value = true;
   // processing here
+  await courseStore.aiCreateOverview(selectedTopic.value, selectedSchedule.value, selectedProfile.value);
   isLoading.value = false;
 
-  // router.push("/challenge");
+  router.push("/overview");
+};
+
+const handleProfileSave = (profile) => {
+  // FIXME: if name is changed, it creates a new profile
+  userStore.editProfile(profile);
+  console.log("Profile saved:", profile);
+};
+
+const handleProfileDiscard = () => {
+  console.log("Profile discarded");
+};
+
+const handleProfileDelete = (profile) => {
+  userStore.deleteProfile(profile);
+  // Clear selection if the deleted profile was selected
+  if (selectedProfile.value === profile) {
+    selectedProfile.value = null;
+  }
+}
+
+
+const addNewProfile = () => {
+  // Opens the card component with an empty profile to create a new one
+  userStore.addProfile({});
+  console.log(userStore.profiles);
 };
 </script>
 
@@ -52,8 +90,28 @@ const handleSubmit = async () => {
   <div class="flex flex-col min-h-screen bg-gray-950">
     <NavBar />
 
-    <main class="flex-1 flex items-center justify-center px-6 py-12">
-      <div class="max-w-4xl w-full space-y-12">
+    <main class="flex-1 flex flex-col px-6 py-12">
+      <div class="max-w-6xl w-full mx-auto space-y-12">
+
+        <!-- Profiles section at the top -->
+        <div class="space-y-6">
+          <div class="flex items-center justify-between">
+            <h2 class="text-3xl font-bold text-white">
+              Learner Profiles
+            </h2>
+            <BaseButton @click="addNewProfile" class="px-4 py-2">
+              + Add Profile
+            </BaseButton>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            <PersonaCard v-for="(profile, index) in userStore.profiles" :key="index" :profile="profile"
+              :isSelected="selectedProfile === profile" @select="selectProfile(profile)" @save="handleProfileSave"
+              @discard="handleProfileDiscard" @delete="handleProfileDelete(profile)" />
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <hr class="border-gray-700" />
 
         <!-- topic section -->
         <div class="space-y-6">
