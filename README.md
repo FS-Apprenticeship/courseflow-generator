@@ -6,7 +6,7 @@
 - [x] storing information in stores instead of local vars
 - [x] default persona creation for new user
 - [x] page / popup to create new personas
-- [ ] add specific durations instead of letting the user put whatever (for course gen)
+- [x] add specific durations instead of letting the user put whatever (for course gen)
 - [ ] implement fetching and uploading in right places
 - [x] add router guards
 - [ ] improve prompting using real life structure
