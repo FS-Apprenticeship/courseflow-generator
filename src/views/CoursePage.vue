@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed, watch, onMounted } from "vue";
 import { useUserStore } from "@/stores/user";
 import { useCourseStore } from "@/stores/course";
 import NavBar from "@/components/NavBar.vue";
@@ -24,10 +24,9 @@ const currentLesson = computed(() => course.value.lessons[currentLessonIndex.val
 
 const sectionOrder = ["introduction", "context", "example", "activity", "assessment", "reflection"];
 
-// const toggleLessonExpanded = (index) => {
-//   expandedLessonIndex.value = expandedLessonIndex.value === index ? null : index;
-//   expandedSectionIndex.value = {};
-// };
+onMounted(async () => {
+  await courseStore.uploadCourse();
+})
 
 const toggleSectionExpanded = (sectionKey) => {
   if (expandedSectionIndex.value[sectionKey]) {
@@ -62,8 +61,9 @@ const refineCourseSimplifiy = async () => {
     await courseStore.aiRefineCourse("simplify_scope", userStore.chosenProfile.value);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
+    await courseStore.updateCourse();
   } catch (error) {
-    console.log("[v0] Error simplifying course scope:", error);
+    console.log("Error simplifying course scope:", error);
   } finally {
     isRefining.value = false;
   }
@@ -75,8 +75,9 @@ const refineCourseAddDepth = async () => {
     await courseStore.aiRefineCourse("add_depth", userStore.chosenProfile.value);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
+    await courseStore.updateCourse();
   } catch (error) {
-    console.log("[v0] Error adding depth to course:", error);
+    console.log("Error adding depth to course:", error);
   } finally {
     isRefining.value = false;
   }
@@ -88,8 +89,9 @@ const refineCourseAdjustWorkloadLess = async () => {
     await courseStore.aiRefineCourse("less_workload", userStore.chosenProfile.value);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
+    await courseStore.updateCourse();
   } catch (error) {
-    console.log("[v0] Error adjusting workload:", error);
+    console.log("Error adjusting workload:", error);
   } finally {
     isRefining.value = false;
   }
@@ -101,8 +103,9 @@ const refineCourseAdjustWorkloadMore = async () => {
     await courseStore.aiRefineCourse("more_workload", userStore.chosenProfile.value);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
+    await courseStore.updateCourse();
   } catch (error) {
-    console.log("[v0] Error adjusting workload:", error);
+    console.log("Error adjusting workload:", error);
   } finally {
     isRefining.value = false;
   }
@@ -114,8 +117,9 @@ const refineCourseAlignGoal = async () => {
     await courseStore.aiRefineCourse("align_goal", userStore.chosenProfile.value);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
+    await courseStore.updateCourse();
   } catch (error) {
-    console.log("[v0] Error aligning course to goal:", error);
+    console.log("Error aligning course to goal:", error);
   } finally {
     isRefining.value = false;
   }
