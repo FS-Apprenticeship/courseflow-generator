@@ -10,6 +10,7 @@ import SignupPage from '@/views/SignupPage.vue'
 import SelectionPage from '@/views/SelectionPage.vue'
 import OverviewPage from './views/OverviewPage.vue'
 import CoursePage from './views/CoursePage.vue'
+import SavedCoursesPage from './views/SavedCoursesPage.vue'
 
 // choose persona, topic, learning style
 // see course generation
@@ -22,6 +23,7 @@ const routes = [
   { path: '/selection', component: SelectionPage, meta: { requiresAuth: true } },
   { path: '/overview', component: OverviewPage, meta: { requiresAuth: true } },
   { path: '/course', component: CoursePage, meta: { requiresAuth: true } },
+  { path: '/saved-courses', component: SavedCoursesPage, meta: { requiresAuth: true } },
 ]
 
 const router = createRouter({

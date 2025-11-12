@@ -65,6 +65,12 @@ export const useCourseStore = defineStore('courseStore', () => {
     }
   }
 
+  function loadCourseData(savedCourse) {
+    course.value = savedCourse.course_data
+    course_id.value = savedCourse.id
+    overviewCompleted.value = true
+  }
+
   async function uploadCourse() {
     if (course.value == {}) {
       console.log("course not found - cant upload")
@@ -93,12 +99,14 @@ export const useCourseStore = defineStore('courseStore', () => {
   return {
     user,
     course,
+    course_id,
     overview,
     selectionCompleted,
     overviewCompleted,
     aiCreateOverview,
     aiCreateCourse,
     aiRefineCourse,
+    loadCourseData,
     uploadCourse,
     getCourses,
     updateCourse,
