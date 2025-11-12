@@ -23,6 +23,10 @@ const durationVal = ref(null);
 const selectedProfile = ref(null);
 
 onMounted(async () => {
+  // reset course and course_id
+  courseStore.course = null;
+  courseStore.course_id = null;
+
   await userStore.checkDefaultProfile();
   await userStore.getPersonas();
   syncStoreUsers(userStore, courseStore);

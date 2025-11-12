@@ -269,6 +269,7 @@ const CourseFormat = {
     schema: {
       type: "object",
       properties: {
+        course_name: { type: "string" },
         goal: { type: "string" },
         duration: { type: "string" },
         total_hours: { type: "number" },
