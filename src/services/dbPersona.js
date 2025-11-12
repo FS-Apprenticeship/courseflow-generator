@@ -5,16 +5,39 @@
 export async function dbUploadPersona(supa, user_id, persona_name, age, reading_level, interests, learning_style) {
   const { data, error } = await supa
     .from('personas')
-    .insert({ user_id: user_id, persona_name: persona_name, age: age, reading_level: reading_level, interests: interests, learning_style: learning_style })
+    .insert({ user_id: user_id, name: persona_name, age: age, readingLevel: reading_level, interests: interests, learningStyle: learning_style })
     .select()
   if (error) throw error;
   return data[0]
 }
 
-export async function dbGetPersonas(supa) {
+export async function dbGetPersonas(supa, user_id) {
   const { data, error } = await supa
     .from('personas')
     .select()
+    .eq('user_id', user_id)
   if (error) throw error;
   return data;
+}
+
+export async function dbDeletePersona(supa, user_id, persona_id) {
+  const { data, error } = await supa
+    .from('personas')
+    .delete()
+    .eq('id', persona_id)
+  if (error) throw error;
+  return data;
+}
+
+// Function to check if ANY personas exist
+// If none exist, upload default profile
+// Otherwise return
+export async function dbDefaultProfile(supa, user_id) {
+  const data = await dbGetPersonas(supa, user_id);
+
+  if (data.length == 0) {
+    console.log("Creating default persona");
+    const { error } = await dbUploadPersona(supa, user_id, "Default Persona", "18", "High School", [], "Conceptual");
+    if (error) throw error;
+  }
 }
