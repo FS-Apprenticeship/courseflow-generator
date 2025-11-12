@@ -12,6 +12,12 @@ import { supa, dbSignIn, dbSignOut, dbSignUp } from '@/services/auth'
 export const useUserStore = defineStore('userStore', () => {
   const user = ref(null)
   const session = ref(null)
+  // set sane defaults later on
+  const profiles = ref([
+    { name: 'Profile 1', age: 15, readingLevel: 'A', interests: ['reading'], learningStyle: 'A' },
+    { name: 'Profile 2', age: 12, readingLevel: 'B', interests: ['sports', 'music'], learningStyle: 'B' },
+  ]);
+  const chosenProfile = ref({});
 
   const isLoggedIn = computed(() => user.value != null)
 
@@ -47,5 +53,30 @@ export const useUserStore = defineStore('userStore', () => {
     router.push('/')
   }
 
-  return { user, session, isLoggedIn, loadUser, signUp, signIn, signOut }
+  function addProfile(profile) {
+    profiles.value.push(profile);
+    console.log("added profile: ", profile)
+  }
+
+  function editProfile(profile) {
+    const index = profiles.value.findIndex(p => p.name === profile.name)
+    if (index > -1) {
+      // Merge to keep reactivity (Vue tracks the existing object)
+      profiles.value[index] = { ...profiles.value[index], ...profile }
+      console.log('Edited profile:', profiles.value[index])
+    } else {
+      // If not found, treat it as a new profile
+      addProfile(profile)
+    }
+    console.log(profiles)
+  }
+
+  function deleteProfile(profile) {
+    const index = profiles.value.indexOf(profile);
+    if (index > -1) {
+      profiles.value.splice(index, 1);
+    }
+  }
+
+  return { user, session, isLoggedIn, profiles, chosenProfile, loadUser, signUp, signIn, signOut, addProfile, editProfile, deleteProfile }
 })

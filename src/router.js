@@ -8,6 +8,8 @@ import LandingPage from '@/views/LandingPage.vue'
 import SigninPage from '@/views/SigninPage.vue'
 import SignupPage from '@/views/SignupPage.vue'
 import SelectionPage from '@/views/SelectionPage.vue'
+import OverviewPage from './views/OverviewPage.vue'
+import CoursePage from './views/CoursePage.vue'
 
 // choose persona, topic, learning style
 // see course generation
@@ -18,6 +20,8 @@ const routes = [
   { path: '/signin', component: SigninPage },
   { path: '/signup', component: SignupPage },
   { path: '/selection', component: SelectionPage },
+  { path: '/overview', component: OverviewPage },
+  { path: '/course', component: CoursePage },
 ]
 
 const router = createRouter({
