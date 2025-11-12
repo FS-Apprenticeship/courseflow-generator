@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, watch, onMounted } from "vue";
+import { ref, computed, watch } from "vue";
 import { useUserStore } from "@/stores/user";
 import { useCourseStore } from "@/stores/course";
 import NavBar from "@/components/NavBar.vue";
@@ -24,9 +24,9 @@ const currentLesson = computed(() => course.value.lessons[currentLessonIndex.val
 
 const sectionOrder = ["introduction", "context", "example", "activity", "assessment", "reflection"];
 
-onMounted(async () => {
+const handleSaveCourse = async () => {
   await courseStore.uploadCourse();
-})
+}
 
 const toggleSectionExpanded = (sectionKey) => {
   if (expandedSectionIndex.value[sectionKey]) {
@@ -144,11 +144,11 @@ watch(
       <div class="max-w-6xl mx-auto">
         <!-- Header -->
         <div class="mb-12">
-          <h1 class="text-4xl font-bold text-white mb-2">{{ course.goal }}</h1>
+          <h1 class="text-4xl font-bold text-white mb-2">{{ course.course_name }}</h1>
           <p class="text-gray-400 mb-6">Duration: {{ course.duration }} | Total: {{ course.total_hours }} hours</p>
 
           <!-- Course Stats -->
-          <div class="flex gap-8">
+          <div class="flex gap-8 mb-6">
             <div class="flex items-center gap-2">
               <span class="text-sm font-medium text-gray-400">Total Duration:</span>
               <span class="text-lg font-bold text-blue-400">{{ course.total_hours }} hours</span>
@@ -158,6 +158,10 @@ watch(
               <span class="text-lg font-bold text-blue-400">{{ course.lessons.length }}</span>
             </div>
           </div>
+
+          <BaseButton @click="handleSaveCourse" variant="primary">
+            Save Course
+          </BaseButton>
         </div>
 
         <!-- Main Layout: Current Lesson (Left) + Lesson Stack (Right) -->
