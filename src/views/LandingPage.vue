@@ -11,6 +11,10 @@ function goToSelection() {
   router.push('/selection')
 }
 
+function goToSavedCourses() {
+  router.push('/saved-courses')
+}
+
 function signInHandler() {
   router.push('/signin')
 }
@@ -38,7 +42,8 @@ function signUpHandler() {
           <BaseButton variant="secondary" @click="signUpHandler()">Sign Up</BaseButton>
         </div>
         <div v-if="isLoggedIn" class="flex flex-col sm:flex-row gap-4 justify-center items-center">
-          <BaseButton variant="secondary" @click="goToSelection()">Selection Page</BaseButton>
+          <BaseButton variant="secondary" @click="goToSelection()">Create New Course</BaseButton>
+          <BaseButton variant="secondary" @click="goToSavedCourses()">Your Courses</BaseButton>
         </div>
       </div>
     </main>
