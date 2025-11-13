@@ -133,7 +133,7 @@ export async function createOverview(goal, duration, age, reading_level, interes
   return data;
 }
 
-export async function refineCourse(currentCourse, refinementType, profile) {
+export async function refineCourse(currentCourse, refinementType) {
   // Refinement type options: "simplify_scope", "add_depth", "less_workload", "more_workload", "align_goal"
 
   let refinementInstructions = ""
@@ -192,12 +192,6 @@ export async function refineCourse(currentCourse, refinementType, profile) {
 
   You previously created a course structure, but we want to make some changes to that course structure.
   I will provide the course structure and the type of changes that I would like applied below.
-
-  The current course was designed for a student with the following profile:
-  - Age: ${profile.age}
-  - Reading level: ${profile.reading_level}
-  - Interests: ${profile.interests}
-  - Learning style: ${profile.learning_style}
 
   ${refinementInstructions}
 

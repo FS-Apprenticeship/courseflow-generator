@@ -54,9 +54,9 @@ export const useCourseStore = defineStore('courseStore', () => {
     course.value = data
   }
 
-  async function aiRefineCourse(refinementType, profile) {
+  async function aiRefineCourse(refinementType) {
     try {
-      let data = await refineCourse(course.value, refinementType, profile)
+      let data = await refineCourse(course.value, refinementType)
       data = JSON.parse(data.text)
       course.value = data
     } catch (error) {

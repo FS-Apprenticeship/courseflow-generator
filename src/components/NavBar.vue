@@ -2,10 +2,8 @@
 import { useUserStore } from '@/stores/user'
 import router from '@/router'
 import { useRoute } from 'vue-router'
-import { useCourseStore } from '@/stores/course'
 
 const userStore = useUserStore()
-const courseStore = useCourseStore()
 const route = useRoute()
 
 // function for WHEN to display the sign out button
@@ -27,8 +25,6 @@ async function signOutHelper() {
 }
 
 function landingPageHelper() {
-  courseStore.course = null
-  courseStore.course_id = null
   router.push('/')
 }
 
