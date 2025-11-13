@@ -5,6 +5,7 @@ import { useCourseStore } from "@/stores/course";
 import NavBar from "@/components/NavBar.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import LessonCard from "@/components/LessonCard.vue";
+import CourseProgressIndicator from "@/components/CourseProgressIndicator.vue";
 
 const userStore = useUserStore();
 const courseStore = useCourseStore();
@@ -200,15 +201,8 @@ watch(
               </div>
 
               <!-- Progress Indicator -->
-              <div class="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
-                <p class="text-xs font-medium text-gray-400 uppercase mb-2">Progress</p>
-                <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
-                  <div :style="{ width: ((currentLessonIndex + 1) / course.lessons.length) * 100 + '%' }"
-                    class="bg-blue-600 h-full transition-all duration-300"></div>
-                </div>
-                <p class="text-sm text-gray-300 mt-2">
-                  {{ currentLessonIndex + 1 }} of {{ course.lessons.length }}
-                </p>
+              <div class="mt-6">
+                <CourseProgressIndicator :currentLessonIndex="currentLessonIndex" :totalLessons="totalLessons" />
               </div>
 
               <!-- Added refinement panel at the bottom -->
