@@ -14,8 +14,8 @@ export const useUserStore = defineStore('userStore', () => {
   const session = ref(null)
   // set sane defaults later on
   const profiles = ref([
-    { name: 'Profile 1', age: 15, readingLevel: 'A', interests: ['reading'], learningStyle: 'A' },
-    { name: 'Profile 2', age: 12, readingLevel: 'B', interests: ['sports', 'music'], learningStyle: 'B' },
+    { name: 'Profile 1', age: 15, readingLevel: "Middle School", interests: ['reading'], learningStyle: "Conceptual" },
+    { name: 'Profile 2', age: 35, readingLevel: "PhD", interests: ['sports', 'music'], learningStyle: "Hands On" },
   ]);
   const chosenProfile = ref({});
 
@@ -61,11 +61,11 @@ export const useUserStore = defineStore('userStore', () => {
   function editProfile(profile) {
     const index = profiles.value.findIndex(p => p.name === profile.name)
     if (index > -1) {
-      // Merge to keep reactivity (Vue tracks the existing object)
       profiles.value[index] = { ...profiles.value[index], ...profile }
       console.log('Edited profile:', profiles.value[index])
     } else {
       // If not found, treat it as a new profile
+      // FIXME: later if we care about this
       addProfile(profile)
     }
     console.log(profiles)

@@ -5,8 +5,9 @@ import { supa } from "./auth";
 
 export async function createCourse(goal, duration, num_lessons, age, reading_level, interests, learning_style) {
   var instructions = `
-  You are a course instructor tasked with creating a course structure for your student.
-  The course must be relevant to the topic the student wants to learn, and must be structured around how quickly they want to learn it.
+  You are an expert curriculm designer for all ages.
+  You are tasked with creating a course structure for your student.
+  The course must be based around the topic the student provides, and the course must be designed around the amount of time the student can commit.
 
   You will be given information regarding the student, such as the following:
   1. Age
@@ -27,9 +28,10 @@ export async function createCourse(goal, duration, num_lessons, age, reading_lev
   Assessment - Describe an appropriate assessment
   Reflection - Describe key takeaways or synthesis goals
 
-  Each of these must include the rationale for why they are relevant and potential assessment types.
+  Each of these must include the rationale (and details) for why they are relevant and potential assessment types.
 
-  Make sure that the sum of the lesson durations are equal to the total_hours for the course
+  Make sure that the sum of the lesson durations are equal to the total_hours for the course before returning.
+  If not, reevalute course structure.
   `
 
   const userPrompt = `
@@ -46,12 +48,12 @@ export async function createCourse(goal, duration, num_lessons, age, reading_lev
   `
   const myPrompts = [
     {
-      role: "user",
-      content: userPrompt,
-    },
-    {
       role: "developer",
       content: instructions,
+    },
+    {
+      role: "user",
+      content: userPrompt,
     }
   ];
 
@@ -72,8 +74,9 @@ export async function createCourse(goal, duration, num_lessons, age, reading_lev
 
 export async function createOverview(goal, duration, age, reading_level, interests, learning_style) {
   var instructions = `
-  You are a course instructor tasked with creating a course structure for your student.
-  The course must be relevant to the topic the student wants to learn, and must be structured around how quickly they want to learn it.
+  You are an expert curriculm designer for all ages.
+  You are tasked with creating a course structure for your student.
+  The course must be based around the topic the student provides, and the course must be designed around the amount of time the student can commit.
 
   You will be given information regarding the student, such as the following:
   1. Age
@@ -81,10 +84,10 @@ export async function createOverview(goal, duration, age, reading_level, interes
   3. Interests (one or multiple)
   4. Their learning style (visual, conceptual, hands-on, narrative, etc.)
 
-  You will be given a topic and duration, and we will create an overview/summary for the course we are thinking of making.
+  Our task is to create a high-level overview regarding what we will teach in the course, including subtopics and lessons.
+  Try to include the student's relevant interests and learning level to make it unique.
   Use the given json format to provide all the information for the course.
 
-  At this point, we are not creating the full course structure, but rather an overview.
   The information we want to see is:
 
   1. Total amount of hours to complete the course
@@ -102,16 +105,16 @@ export async function createOverview(goal, duration, age, reading_level, interes
   Interests: ${interests}
   Learning style: ${learning_style}
 
-  Please create a high-level overview of what this course may look like.
+  Please create a high-level overview of what this course may look like. Write at least 2 sentences.
   `
   const myPrompts = [
     {
-      role: "user",
-      content: userPrompt,
-    },
-    {
       role: "developer",
       content: instructions,
+    },
+    {
+      role: "user",
+      content: userPrompt,
     }
   ];
 
@@ -131,7 +134,7 @@ export async function createOverview(goal, duration, age, reading_level, interes
 }
 
 export async function refineCourse(currentCourse, refinementType, profile) {
-  // Refinement type options: "simplify_scope", "add_depth", "adjust_workload", "align_goal"
+  // Refinement type options: "simplify_scope", "add_depth", "less_workload", "more_workload", "align_goal"
 
   let refinementInstructions = ""
 
@@ -183,7 +186,12 @@ export async function refineCourse(currentCourse, refinementType, profile) {
   }
 
   var instructions = `
-  You are a course instructor tasked with refining an existing course structure based on user feedback.
+  You are an expert curriculm designer for all ages.
+  You are tasked with creating a course structure for your student.
+  The course must be based around the topic the student provides, and the course must be designed around the amount of time the student can commit.
+
+  You previously created a course structure, but we want to make some changes to that course structure.
+  I will provide the course structure and the type of changes that I would like applied below.
 
   The current course was designed for a student with the following profile:
   - Age: ${profile.age}
@@ -206,17 +214,18 @@ export async function refineCourse(currentCourse, refinementType, profile) {
   ${JSON.stringify(currentCourse, null, 2)}
 
   Please refine this course as described above, maintaining all required fields and the proper JSON schema.
+  Double check before returning that the sum of durations for all lessons equals course total_hours. Otherwise reevaluate
   `
 
   const myPrompts = [
     {
-      role: "user",
-      content: userPrompt,
-    },
-    {
       role: "developer",
       content: instructions,
     },
+    {
+      role: "user",
+      content: userPrompt,
+    }
   ]
 
   const prompt = {
