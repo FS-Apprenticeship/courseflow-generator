@@ -17,11 +17,13 @@ const isLoading = ref(false);
 
 onMounted(async () => {
   // reset course and course_id
+  userStore.chosenProfile = null;
   courseStore.course = null;
   courseStore.course_id = null;
 
   await userStore.checkDefaultProfile();
   syncStoreUsers(userStore, courseStore);
+  await userStore.getPersonas();
   await fetchSavedCourses();
 });
 
@@ -32,8 +34,9 @@ const fetchSavedCourses = async () => {
   isLoading.value = false;
 };
 
-const handleCourseClick = (course) => {
+const handleCourseClick = async (course) => {
   courseStore.loadCourseData(course);
+  await userStore.loadPersonaData(courseStore.persona_id);
   router.push("/course");
 };
 
