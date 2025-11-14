@@ -2,10 +2,10 @@
 // These functions are never used directly in .vue files
 // Imported into useUserStore and useCourseStore to be used
 
-export async function dbUploadCourses(supa, user_id, course) {
+export async function dbUploadCourses(supa, user_id, persona_id, course) {
   const { data, error } = await supa
     .from('courses')
-    .insert({ user_id: user_id, course_data: course })
+    .insert({ user_id: user_id, persona_id: persona_id, course_data: course })
     .select()
   if (error) throw error;
   return data[0]

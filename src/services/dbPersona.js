@@ -20,6 +20,16 @@ export async function dbGetPersonas(supa, user_id) {
   return data;
 }
 
+export async function dbGetSpecificPersona(supa, user_id, persona_id) {
+  const { data, error } = await supa
+    .from('personas')
+    .select()
+    .eq('id', persona_id)
+    .single()
+  if (error) throw error
+  return data;
+}
+
 export async function dbDeletePersona(supa, user_id, persona_id) {
   const { data, error } = await supa
     .from('personas')

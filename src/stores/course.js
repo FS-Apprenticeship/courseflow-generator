@@ -20,6 +20,7 @@ export const useCourseStore = defineStore('courseStore', () => {
   })
 
   const course_id = ref(null);
+  const persona_id = ref(null);
 
   // for router guards
   const selectionCompleted = ref(false)
@@ -68,16 +69,17 @@ export const useCourseStore = defineStore('courseStore', () => {
   function loadCourseData(savedCourse) {
     course.value = savedCourse.course_data
     course_id.value = savedCourse.id
+    persona_id.value = savedCourse.persona_id
     overviewCompleted.value = true
   }
 
-  async function uploadCourse() {
+  async function uploadCourse(persona_id) {
     if (course.value == {}) {
       console.log("course not found - cant upload")
       return;
     }
 
-    const data = await dbUploadCourses(supa, user.value.id, course.value);
+    const data = await dbUploadCourses(supa, user.value.id, persona_id, course.value);
     course_id.value = data.id;
     return data;
   }
@@ -100,6 +102,7 @@ export const useCourseStore = defineStore('courseStore', () => {
     user,
     course,
     course_id,
+    persona_id,
     overview,
     selectionCompleted,
     overviewCompleted,

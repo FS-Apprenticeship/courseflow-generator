@@ -25,7 +25,7 @@ const currentLesson = computed(() => course.value.lessons[currentLessonIndex.val
 const sectionOrder = ["introduction", "context", "example", "activity", "assessment", "reflection"];
 
 const handleSaveCourse = async () => {
-  await courseStore.uploadCourse();
+  await courseStore.uploadCourse(userStore.chosenProfile.value.id);
 }
 
 const toggleSectionExpanded = (sectionKey) => {
