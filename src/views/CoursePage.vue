@@ -1,11 +1,13 @@
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { useUserStore } from "@/stores/user";
 import { useCourseStore } from "@/stores/course";
+
 import NavBar from "@/components/NavBar.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import LessonCard from "@/components/LessonCard.vue";
 import CourseProgressIndicator from "@/components/CourseProgressIndicator.vue";
+import RefinementPanel from "@/components/RefinementPanel.vue";
 
 const userStore = useUserStore();
 const courseStore = useCourseStore();
@@ -14,7 +16,7 @@ const currentLessonIndex = ref(0);
 const expandedLessonIndex = ref(null);
 const isRefining = ref(false);
 
-const course = ref({
+const course = computed(() => courseStore.course || {
   goal: "",
   duration: "",
   total_hours: 0,
@@ -115,16 +117,6 @@ const refineCourseAlignGoal = async () => {
     isRefining.value = false;
   }
 };
-
-watch(
-  () => courseStore.course,
-  (newCourse) => {
-    if (newCourse) {
-      course.value = newCourse;
-    }
-  },
-  { immediate: true }
-);
 </script>
 
 <template>
@@ -202,86 +194,14 @@ watch(
 
               <!-- Progress Indicator -->
               <div class="mt-6">
-                <CourseProgressIndicator :currentLessonIndex="currentLessonIndex" :totalLessons="totalLessons" />
+                <CourseProgressIndicator :currentLessonIndex="currentLessonIndex"
+                  :totalLessons="course.lessons.length" />
               </div>
 
               <!-- Added refinement panel at the bottom -->
-              <div class="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
-                <p class="text-xs font-medium text-gray-400 uppercase mb-4">Review & Refine</p>
-                <div class="space-y-2">
-                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseSimplifiy"
-                    class="w-full text-sm">
-                    <span v-if="isRefining" class="inline-flex items-center gap-2">
-                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                      </svg>
-                      Simplifying...
-                    </span>
-                    <span v-else>Simplify Scope</span>
-                  </BaseButton>
-                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseAddDepth"
-                    class="w-full text-sm">
-                    <span v-if="isRefining" class="inline-flex items-center gap-2">
-                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                      </svg>
-                      Adding depth...
-                    </span>
-                    <span v-else>Add More Depth</span>
-                  </BaseButton>
-                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseAdjustWorkloadLess"
-                    class="w-full text-sm">
-                    <span v-if="isRefining" class="inline-flex items-center gap-2">
-                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                      </svg>
-                      Adjusting...
-                    </span>
-                    <span v-else>Adjust Workload - Less</span>
-                  </BaseButton>
-                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseAdjustWorkloadMore"
-                    class="w-full text-sm">
-                    <span v-if="isRefining" class="inline-flex items-center gap-2">
-                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                      </svg>
-                      Adjusting...
-                    </span>
-                    <span v-else>Adjust Workload - More</span>
-                  </BaseButton>
-                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseAlignGoal"
-                    class="w-full text-sm">
-                    <span v-if="isRefining" class="inline-flex items-center gap-2">
-                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                      </svg>
-                      Aligning...
-                    </span>
-                    <span v-else>Align Better to Goal</span>
-                  </BaseButton>
-                </div>
-              </div>
-
+              <RefinementPanel :isRefining="isRefining" @simplify-scope="refineCourseSimplifiy"
+                @add-depth="refineCourseAddDepth" @adjust-workload-less="refineCourseAdjustWorkloadLess"
+                @adjust-workload-more="refineCourseAdjustWorkloadMore" @align-goal="refineCourseAlignGoal" />
             </div>
           </div>
         </div>
