@@ -17,9 +17,9 @@ const isLoading = ref(false);
 
 onMounted(async () => {
   // reset course and course_id
-  userStore.chosenProfile = null;
-  courseStore.course = null;
-  courseStore.course_id = null;
+  // userStore.chosenProfile = null;
+  // courseStore.course = null;
+  // courseStore.course_id = null;
 
   await userStore.checkDefaultProfile();
   syncStoreUsers(userStore, courseStore);

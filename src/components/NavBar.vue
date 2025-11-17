@@ -27,9 +27,9 @@ async function signOutHelper() {
 }
 
 function landingPageHelper() {
-  userStore.chosenProfile = null;
-  courseStore.course = null
-  courseStore.course_id = null
+  // userStore.chosenProfile = null;
+  // courseStore.course = null
+  // courseStore.course_id = null
   router.push('/')
 }
 
