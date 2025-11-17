@@ -58,7 +58,7 @@ const goToPreviousLesson = () => {
 const refineCourseSimplifiy = async () => {
   isRefining.value = true;
   try {
-    await courseStore.aiRefineCourse("simplify_scope", userStore.chosenProfile.value);
+    await courseStore.aiRefineCourse("simplify_scope", userStore.chosenProfile);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
     await courseStore.updateCourse();
@@ -72,7 +72,7 @@ const refineCourseSimplifiy = async () => {
 const refineCourseAddDepth = async () => {
   isRefining.value = true;
   try {
-    await courseStore.aiRefineCourse("add_depth", userStore.chosenProfile.value);
+    await courseStore.aiRefineCourse("add_depth", userStore.chosenProfile);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
     await courseStore.updateCourse();
@@ -86,7 +86,7 @@ const refineCourseAddDepth = async () => {
 const refineCourseAdjustWorkloadLess = async () => {
   isRefining.value = true;
   try {
-    await courseStore.aiRefineCourse("less_workload", userStore.chosenProfile.value);
+    await courseStore.aiRefineCourse("less_workload", userStore.chosenProfile);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
     await courseStore.updateCourse();
@@ -100,7 +100,7 @@ const refineCourseAdjustWorkloadLess = async () => {
 const refineCourseAdjustWorkloadMore = async () => {
   isRefining.value = true;
   try {
-    await courseStore.aiRefineCourse("more_workload", userStore.chosenProfile.value);
+    await courseStore.aiRefineCourse("more_workload", userStore.chosenProfile);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
     await courseStore.updateCourse();
@@ -114,7 +114,7 @@ const refineCourseAdjustWorkloadMore = async () => {
 const refineCourseAlignGoal = async () => {
   isRefining.value = true;
   try {
-    await courseStore.aiRefineCourse("align_goal", userStore.chosenProfile.value);
+    await courseStore.aiRefineCourse("align_goal", userStore.chosenProfile);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
     await courseStore.updateCourse();
