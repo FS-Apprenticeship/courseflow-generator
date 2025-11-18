@@ -38,16 +38,3 @@ export async function dbDeletePersona(supa, user_id, persona_id) {
   if (error) throw error;
   return data;
 }
-
-// Function to check if ANY personas exist
-// If none exist, upload default profile
-// Otherwise return
-export async function dbDefaultProfile(supa, user_id) {
-  const data = await dbGetPersonas(supa, user_id);
-
-  if (data.length == 0) {
-    console.log("Creating default persona");
-    const { error } = await dbUploadPersona(supa, user_id, "Default Persona", "18", "High School", [], "Conceptual");
-    if (error) throw error;
-  }
-}

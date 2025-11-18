@@ -8,7 +8,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import router from '@/router'
 import { supa, dbSignIn, dbSignOut, dbSignUp } from '@/services/auth'
-import { dbDefaultProfile, dbDeletePersona, dbGetPersonas, dbGetSpecificPersona, dbUploadPersona } from '@/services/dbPersona'
+import { dbDeletePersona, dbGetPersonas, dbGetSpecificPersona, dbUploadPersona } from '@/services/dbPersona'
 
 export const useUserStore = defineStore('userStore', () => {
   const user = ref(null)
@@ -52,8 +52,14 @@ export const useUserStore = defineStore('userStore', () => {
     router.push('/')
   }
 
-  async function checkDefaultProfile() {
-    await dbDefaultProfile(supa, user.value.id)
+  async function createDefaultProfileIfNoneExist() {
+    const data = await dbGetPersonas(supa, user.value.id);
+
+    if (data.length == 0) {
+      console.log("Creating default persona");
+      const { error } = await dbUploadPersona(supa, user.value.id, "Default Persona", "18", "High School", [], "Conceptual");
+      if (error) throw error;
+    }
   }
 
   async function getPersonas() {
@@ -106,7 +112,7 @@ export const useUserStore = defineStore('userStore', () => {
     signUp,
     signIn,
     signOut,
-    checkDefaultProfile,
+    createDefaultProfileIfNoneExist,
     getPersonas,
     loadPersonaData,
     addProfile,

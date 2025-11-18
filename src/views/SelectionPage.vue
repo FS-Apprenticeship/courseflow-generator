@@ -28,7 +28,7 @@ onMounted(async () => {
   courseStore.course = null;
   courseStore.course_id = null;
 
-  await userStore.checkDefaultProfile();
+  await userStore.createDefaultProfileIfNoneExist();
   await userStore.getPersonas();
   syncStoreUsers(userStore, courseStore);
 });
