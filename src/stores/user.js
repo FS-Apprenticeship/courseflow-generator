@@ -53,13 +53,8 @@ export const useUserStore = defineStore('userStore', () => {
   }
 
   async function createDefaultProfileIfNoneExist() {
-    const data = await dbGetPersonas(supa, user.value.id);
-
-    if (data.length == 0) {
-      console.log("Creating default persona");
-      const { error } = await dbUploadPersona(supa, user.value.id, "Default Persona", "18", "High School", [], "Conceptual");
-      if (error) throw error;
-    }
+    const { error } = await dbUploadPersona(supa, user.value.id, "Default Persona", "18", "High School", [], "Conceptual");
+    if (error) throw error;
   }
 
   async function getPersonas() {
