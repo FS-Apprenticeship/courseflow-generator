@@ -15,6 +15,7 @@ const courseStore = useCourseStore();
 const currentLessonIndex = ref(0);
 const expandedLessonIndex = ref(null);
 const isRefining = ref(false);
+const isSaveLoading = ref(false);
 
 const course = computed(() => courseStore.course || {
   goal: "",
@@ -26,7 +27,9 @@ const course = computed(() => courseStore.course || {
 const currentLesson = computed(() => course.value.lessons[currentLessonIndex.value]);
 
 const handleSaveCourse = async () => {
+  isSaveLoading.value = true;
   await courseStore.uploadCourse(userStore.chosenProfile.value.id);
+  isSaveLoading.value = false;
 }
 
 const goToLesson = (index) => {
@@ -142,7 +145,7 @@ const refineCourseAlignGoal = async () => {
             </div>
           </div>
 
-          <BaseButton @click="handleSaveCourse" variant="primary">
+          <BaseButton @loading="isSaveLoading" @click="handleSaveCourse" variant="primary">
             Save Course
           </BaseButton>
         </div>
