@@ -8,16 +8,16 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import router from '@/router'
 import { supa, dbSignIn, dbSignOut, dbSignUp } from '@/services/auth'
+import { dbDeletePersona, dbGetPersonas, dbGetSpecificPersona, dbUploadPersona } from '@/services/dbPersona'
 
 export const useUserStore = defineStore('userStore', () => {
   const user = ref(null)
   const session = ref(null)
-  // set sane defaults later on
-  const profiles = ref([
-    { name: 'Profile 1', age: 15, readingLevel: "Middle School", interests: ['reading'], learningStyle: "Conceptual" },
-    { name: 'Profile 2', age: 35, readingLevel: "PhD", interests: ['sports', 'music'], learningStyle: "Hands On" },
-  ]);
-  const chosenProfile = ref({});
+
+  // loaded from db
+  const profiles = ref({})
+  // gotten from selection page
+  const chosenProfile = ref({})
 
   const isLoggedIn = computed(() => user.value != null)
 
@@ -40,7 +40,6 @@ export const useUserStore = defineStore('userStore', () => {
     const { data, error } = await dbSignIn(supa, email, password)
     if (error) throw error
     this.user = data.user
-    this.profile.id = data.user.id
     this.session = data.session
     router.push('/selection')
   }
@@ -53,30 +52,66 @@ export const useUserStore = defineStore('userStore', () => {
     router.push('/')
   }
 
-  function addProfile(profile) {
-    profiles.value.push(profile);
-    console.log("added profile: ", profile)
+  async function createDefaultProfileIfNoneExist() {
+    const { error } = await dbUploadPersona(supa, user.value.id, "Default Persona", "18", "High School", [], "Conceptual");
+    if (error) throw error;
   }
 
-  function editProfile(profile) {
-    const index = profiles.value.findIndex(p => p.name === profile.name)
+  async function getPersonas() {
+    const data = await dbGetPersonas(supa, user.value.id)
+    profiles.value = data
+    console.log('checking userStore profiles: ', profiles.value)
+  }
+
+  async function loadPersonaData(persona_id) {
+    const data = await dbGetSpecificPersona(supa, user.value.id, persona_id)
+    chosenProfile.value = data
+  }
+
+  async function addProfile(profile) {
+    const data = await dbUploadPersona(supa, user.value.id, profile.name, profile.age, profile.readingLevel, profile.interests, profile.learningStyle);
+    profiles.value.push(profile)
+    console.log('added profile: ', profile)
+    return data;
+  }
+
+  async function editProfile(profile) {
+    const index = profiles.value.findIndex((p) => p.name === profile.name)
     if (index > -1) {
       profiles.value[index] = { ...profiles.value[index], ...profile }
       console.log('Edited profile:', profiles.value[index])
     } else {
       // If not found, treat it as a new profile
       // FIXME: later if we care about this
-      addProfile(profile)
+      await addProfile(profile)
     }
     console.log(profiles)
   }
 
-  function deleteProfile(profile) {
-    const index = profiles.value.indexOf(profile);
+  async function deleteProfile(profile) {
+    const index = profiles.value.indexOf(profile)
+    console.log("deleting: ", profiles.value[index].id)
+    await dbDeletePersona(supa, user.value.id, profiles.value[index].id)
     if (index > -1) {
-      profiles.value.splice(index, 1);
+      profiles.value.splice(index, 1)
     }
   }
 
-  return { user, session, isLoggedIn, profiles, chosenProfile, loadUser, signUp, signIn, signOut, addProfile, editProfile, deleteProfile }
+  return {
+    user,
+    session,
+    isLoggedIn,
+    profiles,
+    chosenProfile,
+    loadUser,
+    signUp,
+    signIn,
+    signOut,
+    createDefaultProfileIfNoneExist,
+    getPersonas,
+    loadPersonaData,
+    addProfile,
+    editProfile,
+    deleteProfile,
+  }
 })

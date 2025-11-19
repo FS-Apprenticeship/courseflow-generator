@@ -23,6 +23,16 @@ const durationVal = ref(null);
 const selectedProfile = ref(null);
 
 onMounted(async () => {
+  // reset course and course_id
+  userStore.chosenProfile = null;
+  courseStore.course = null;
+  courseStore.course_id = null;
+
+  await userStore.getPersonas();
+  if (userStore.profiles.length < 1) {
+    await userStore.createDefaultProfileIfNoneExist();
+    await userStore.getPersonas();
+  }
   syncStoreUsers(userStore, courseStore);
 });
 
@@ -56,9 +66,11 @@ const handleSubmit = async () => {
   router.push("/overview");
 };
 
-const handleProfileSave = (profile) => {
+const handleProfileSave = async (profile) => {
+  // index indicates which one we are changing
+  console.log("selection - checking edited profile: ", profile)
   // FIXME: if name is changed, it creates a new profile
-  userStore.editProfile(profile);
+  await userStore.editProfile(profile);
   console.log("Profile saved:", profile);
 };
 
@@ -66,17 +78,17 @@ const handleProfileDiscard = () => {
   console.log("Profile discarded");
 };
 
-const handleProfileDelete = (profile) => {
-  userStore.deleteProfile(profile);
+const handleProfileDelete = async (profile) => {
+  await userStore.deleteProfile(profile);
   // Clear selection if the deleted profile was selected
   if (selectedProfile.value === profile) {
     selectedProfile.value = null;
   }
 }
 
-const addNewProfile = () => {
+const addNewProfile = async () => {
   // Opens the card component with an empty profile to create a new one
-  userStore.addProfile({});
+  await userStore.addProfile({});
   console.log(userStore.profiles);
 };
 </script>
