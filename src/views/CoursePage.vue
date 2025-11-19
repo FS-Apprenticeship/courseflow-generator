@@ -2,6 +2,7 @@
 import { ref, computed } from "vue";
 import { useUserStore } from "@/stores/user";
 import { useCourseStore } from "@/stores/course";
+import { useToast } from "vue-toastification";
 
 import NavBar from "@/components/NavBar.vue";
 import BaseButton from "@/components/BaseButton.vue";
@@ -11,6 +12,7 @@ import RefinementPanel from "@/components/RefinementPanel.vue";
 
 const userStore = useUserStore();
 const courseStore = useCourseStore();
+const toast = useToast();
 
 const currentLessonIndex = ref(0);
 const expandedLessonIndex = ref(null);
@@ -28,8 +30,9 @@ const currentLesson = computed(() => course.value.lessons[currentLessonIndex.val
 
 const handleSaveCourse = async () => {
   isSaveLoading.value = true;
-  await courseStore.uploadCourse(userStore.chosenProfile.value.id);
+  await courseStore.uploadCourse(userStore.chosenProfile.id);
   isSaveLoading.value = false;
+  toast.success("Course saved successfully!");
 }
 
 const goToLesson = (index) => {
@@ -145,7 +148,7 @@ const refineCourseAlignGoal = async () => {
             </div>
           </div>
 
-          <BaseButton @loading="isSaveLoading" @click="handleSaveCourse" variant="primary">
+          <BaseButton @loading="isSaveLoading.value" @click="handleSaveCourse" variant="primary">
             Save Course
           </BaseButton>
         </div>
