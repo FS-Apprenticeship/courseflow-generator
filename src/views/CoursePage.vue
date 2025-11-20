@@ -30,7 +30,7 @@ const currentLesson = computed(() => course.value.lessons[currentLessonIndex.val
 
 const handleSaveCourse = async () => {
   isSaveLoading.value = true;
-  await courseStore.uploadCourse(userStore.chosenProfile.id);
+  await courseStore.uploadCourse(userStore.chosenProfile.value.id);
   isSaveLoading.value = false;
   toast.success("Course saved successfully!");
 }
