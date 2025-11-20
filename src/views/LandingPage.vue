@@ -37,7 +37,7 @@ function signUpHandler() {
           </p>
         </div>
 
-        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+        <div v-if="!isLoggedIn" class="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <BaseButton variant="secondary" @click="signInHandler()">Sign In</BaseButton>
           <BaseButton variant="secondary" @click="signUpHandler()">Sign Up</BaseButton>
         </div>

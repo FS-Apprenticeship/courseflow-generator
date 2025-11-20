@@ -1,19 +1,25 @@
 <script setup>
-import { ref, computed, watch } from "vue";
+import { ref, computed } from "vue";
 import { useUserStore } from "@/stores/user";
 import { useCourseStore } from "@/stores/course";
+import { useToast } from "vue-toastification";
+
 import NavBar from "@/components/NavBar.vue";
 import BaseButton from "@/components/BaseButton.vue";
+import LessonCard from "@/components/LessonCard.vue";
+import CourseProgressIndicator from "@/components/CourseProgressIndicator.vue";
+import RefinementPanel from "@/components/RefinementPanel.vue";
 
 const userStore = useUserStore();
 const courseStore = useCourseStore();
+const toast = useToast();
 
 const currentLessonIndex = ref(0);
 const expandedLessonIndex = ref(null);
-const expandedSectionIndex = ref({});
 const isRefining = ref(false);
+const isSaveLoading = ref(false);
 
-const course = ref({
+const course = computed(() => courseStore.course || {
   goal: "",
   duration: "",
   total_hours: 0,
@@ -22,19 +28,12 @@ const course = ref({
 
 const currentLesson = computed(() => course.value.lessons[currentLessonIndex.value]);
 
-const sectionOrder = ["introduction", "context", "example", "activity", "assessment", "reflection"];
-
 const handleSaveCourse = async () => {
-  await courseStore.uploadCourse(userStore.chosenProfile.value.id);
+  isSaveLoading.value = true;
+  await courseStore.uploadCourse(userStore.chosenProfile.id);
+  isSaveLoading.value = false;
+  toast.success("Course saved successfully!");
 }
-
-const toggleSectionExpanded = (sectionKey) => {
-  if (expandedSectionIndex.value[sectionKey]) {
-    expandedSectionIndex.value[sectionKey] = false;
-  } else {
-    expandedSectionIndex.value[sectionKey] = true;
-  }
-};
 
 const goToLesson = (index) => {
   currentLessonIndex.value = index;
@@ -58,7 +57,7 @@ const goToPreviousLesson = () => {
 const refineCourseSimplifiy = async () => {
   isRefining.value = true;
   try {
-    await courseStore.aiRefineCourse("simplify_scope", userStore.chosenProfile.value);
+    await courseStore.aiRefineCourse("simplify_scope", userStore.chosenProfile);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
     await courseStore.updateCourse();
@@ -72,7 +71,7 @@ const refineCourseSimplifiy = async () => {
 const refineCourseAddDepth = async () => {
   isRefining.value = true;
   try {
-    await courseStore.aiRefineCourse("add_depth", userStore.chosenProfile.value);
+    await courseStore.aiRefineCourse("add_depth", userStore.chosenProfile);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
     await courseStore.updateCourse();
@@ -86,7 +85,7 @@ const refineCourseAddDepth = async () => {
 const refineCourseAdjustWorkloadLess = async () => {
   isRefining.value = true;
   try {
-    await courseStore.aiRefineCourse("less_workload", userStore.chosenProfile.value);
+    await courseStore.aiRefineCourse("less_workload", userStore.chosenProfile);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
     await courseStore.updateCourse();
@@ -100,7 +99,7 @@ const refineCourseAdjustWorkloadLess = async () => {
 const refineCourseAdjustWorkloadMore = async () => {
   isRefining.value = true;
   try {
-    await courseStore.aiRefineCourse("more_workload", userStore.chosenProfile.value);
+    await courseStore.aiRefineCourse("more_workload", userStore.chosenProfile);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
     await courseStore.updateCourse();
@@ -114,7 +113,7 @@ const refineCourseAdjustWorkloadMore = async () => {
 const refineCourseAlignGoal = async () => {
   isRefining.value = true;
   try {
-    await courseStore.aiRefineCourse("align_goal", userStore.chosenProfile.value);
+    await courseStore.aiRefineCourse("align_goal", userStore.chosenProfile);
     currentLessonIndex.value = 0;
     expandedLessonIndex.value = 0;
     await courseStore.updateCourse();
@@ -124,16 +123,6 @@ const refineCourseAlignGoal = async () => {
     isRefining.value = false;
   }
 };
-
-watch(
-  () => courseStore.course,
-  (newCourse) => {
-    if (newCourse) {
-      course.value = newCourse;
-    }
-  },
-  { immediate: true }
-);
 </script>
 
 <template>
@@ -159,7 +148,7 @@ watch(
             </div>
           </div>
 
-          <BaseButton @click="handleSaveCourse" variant="primary">
+          <BaseButton @loading="isSaveLoading.value" @click="handleSaveCourse" variant="primary">
             Save Course
           </BaseButton>
         </div>
@@ -168,85 +157,8 @@ watch(
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <!-- Current Lesson Detail View (Left - 2 columns on large screens) -->
           <div class="lg:col-span-2">
-            <div class="bg-gray-800 rounded-lg border border-gray-700 p-8">
-              <div class="mb-6">
-                <div class="flex items-start justify-between mb-4">
-                  <div>
-                    <h2 class="text-3xl font-bold text-white mb-2">
-                      {{ currentLesson.title }}
-                    </h2>
-                    <p class="text-gray-400">Lesson {{ currentLessonIndex + 1 }} of {{ course.lessons.length }}</p>
-                  </div>
-                  <div class="text-right">
-                    <div class="bg-blue-600 rounded-lg px-4 py-2 inline-block">
-                      <span class="text-white font-medium">Currently Viewing</span>
-                    </div>
-                  </div>
-                </div>
-
-                <!-- Lesson Metadata -->
-                <div class="flex gap-6 mb-8 pb-6 border-b border-gray-700">
-                  <div>
-                    <span class="text-sm font-medium text-gray-400">Duration</span>
-                    <p class="text-xl font-bold text-white mt-1">{{ currentLesson.duration }}</p>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Scaffold Sections - All Expandable -->
-              <div class="space-y-3">
-                <h3 class="text-sm font-bold text-gray-300 uppercase tracking-wide mb-4">Lesson Structure</h3>
-
-                <div v-for="sectionKey in sectionOrder" :key="sectionKey"
-                  class="border border-gray-700 rounded-lg overflow-hidden">
-                  <!-- Section Header - Clickable -->
-                  <button @click="toggleSectionExpanded(sectionKey)"
-                    class="w-full px-6 py-4 bg-gray-700 hover:bg-gray-600 transition-colors flex items-center justify-between">
-                    <div class="flex items-center gap-3 text-left">
-                      <span class="text-lg font-semibold text-white capitalize">{{ sectionKey }}</span>
-                      <span class="text-sm font-medium text-gray-300">
-                        ({{ currentLesson[sectionKey]?.assessment_format || "—" }})
-                      </span>
-                    </div>
-                    <svg :class="[
-                      'w-5 h-5 text-gray-300 transition-transform',
-                      expandedSectionIndex[sectionKey] ? 'rotate-180' : '',
-                    ]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                        d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-                    </svg>
-                  </button>
-
-                  <!-- Section Content - Expandable -->
-                  <div v-if="expandedSectionIndex[sectionKey] && currentLesson[sectionKey]"
-                    class="bg-gray-800 px-6 py-4 space-y-4 border-t border-gray-700">
-                    <!-- Rationale -->
-                    <div>
-                      <h4 class="text-sm font-bold text-gray-300 uppercase mb-2">Rationale</h4>
-                      <p class="text-gray-200 leading-relaxed">{{ currentLesson[sectionKey].rationale }}</p>
-                    </div>
-
-                    <!-- Assessment Format -->
-                    <div class="pt-4 border-t border-gray-700">
-                      <h4 class="text-sm font-bold text-gray-300 uppercase mb-2">Assessment Format</h4>
-                      <div class="inline-block bg-blue-900 text-blue-200 px-3 py-1 rounded text-sm font-medium">
-                        {{ currentLesson[sectionKey].assessment_format }}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Navigation Buttons -->
-              <div class="flex gap-4 mt-8 pt-6 border-t border-gray-700">
-                <BaseButton variant="secondary" @click="goToPreviousLesson" :disabled="currentLessonIndex === 0">
-                  Previous Lesson
-                </BaseButton>
-                <BaseButton @click="goToNextLesson" :disabled="currentLessonIndex === course.lessons.length - 1">
-                  Next Lesson
-                </BaseButton>
-              </div>
-            </div>
+            <LessonCard :lesson="currentLesson" :lessonIndex="currentLessonIndex" :totalLessons="course.lessons.length"
+              @previous-lesson="goToPreviousLesson" @next-lesson="goToNextLesson" />
           </div>
 
           <!-- Lesson Stack Navigation (Right - 1 column on large screens) -->
@@ -287,94 +199,15 @@ watch(
               </div>
 
               <!-- Progress Indicator -->
-              <div class="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
-                <p class="text-xs font-medium text-gray-400 uppercase mb-2">Progress</p>
-                <div class="w-full bg-gray-700 rounded-full h-2 overflow-hidden">
-                  <div :style="{ width: ((currentLessonIndex + 1) / course.lessons.length) * 100 + '%' }"
-                    class="bg-blue-600 h-full transition-all duration-300"></div>
-                </div>
-                <p class="text-sm text-gray-300 mt-2">
-                  {{ currentLessonIndex + 1 }} of {{ course.lessons.length }}
-                </p>
+              <div class="mt-6">
+                <CourseProgressIndicator :currentLessonIndex="currentLessonIndex"
+                  :totalLessons="course.lessons.length" />
               </div>
 
               <!-- Added refinement panel at the bottom -->
-              <div class="mt-6 p-4 bg-gray-800 rounded-lg border border-gray-700">
-                <p class="text-xs font-medium text-gray-400 uppercase mb-4">Review & Refine</p>
-                <div class="space-y-2">
-                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseSimplifiy"
-                    class="w-full text-sm">
-                    <span v-if="isRefining" class="inline-flex items-center gap-2">
-                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                      </svg>
-                      Simplifying...
-                    </span>
-                    <span v-else>Simplify Scope</span>
-                  </BaseButton>
-                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseAddDepth"
-                    class="w-full text-sm">
-                    <span v-if="isRefining" class="inline-flex items-center gap-2">
-                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                      </svg>
-                      Adding depth...
-                    </span>
-                    <span v-else>Add More Depth</span>
-                  </BaseButton>
-                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseAdjustWorkloadLess"
-                    class="w-full text-sm">
-                    <span v-if="isRefining" class="inline-flex items-center gap-2">
-                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                      </svg>
-                      Adjusting...
-                    </span>
-                    <span v-else>Adjust Workload - Less</span>
-                  </BaseButton>
-                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseAdjustWorkloadMore"
-                    class="w-full text-sm">
-                    <span v-if="isRefining" class="inline-flex items-center gap-2">
-                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                      </svg>
-                      Adjusting...
-                    </span>
-                    <span v-else>Adjust Workload - More</span>
-                  </BaseButton>
-                  <BaseButton variant="secondary" :disabled="isRefining" @click="refineCourseAlignGoal"
-                    class="w-full text-sm">
-                    <span v-if="isRefining" class="inline-flex items-center gap-2">
-                      <svg class="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4">
-                        </circle>
-                        <path class="opacity-75" fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                        </path>
-                      </svg>
-                      Aligning...
-                    </span>
-                    <span v-else>Align Better to Goal</span>
-                  </BaseButton>
-                </div>
-              </div>
-
+              <RefinementPanel :isRefining="isRefining" @simplify-scope="refineCourseSimplifiy"
+                @add-depth="refineCourseAddDepth" @adjust-workload-less="refineCourseAdjustWorkloadLess"
+                @adjust-workload-more="refineCourseAdjustWorkloadMore" @align-goal="refineCourseAlignGoal" />
             </div>
           </div>
         </div>

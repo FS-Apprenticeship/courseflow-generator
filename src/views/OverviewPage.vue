@@ -92,6 +92,9 @@ const cancelEdit = () => {
 
 const handleSubmit = async () => {
   isLoading.value = true;
+  courseStore.overview.overview = overviewText.value;
+  courseStore.overview.total_hours = totalHours.value;
+  courseStore.overview.num_lessons = numLessons.value;
 
   await courseStore.aiCreateCourse(userStore.chosenProfile.value);
   courseStore.overviewCompleted = true;
